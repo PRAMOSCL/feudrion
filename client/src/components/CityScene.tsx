@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { GROUND_SRC, SCENE_H, SCENE_W, SLOTS, SPRITE_SRC, spriteBox } from '../sceneConfig';
 import { fmtDuration } from '../format';
+import { MASK_SIZE, clientToStage, hitTestBuildings, type Masks } from '../sceneGeometry';
+import { GROUND_SRC, SCENE_H, SCENE_W, SLOTS, SPRITE_SRC, spriteBox } from '../sceneConfig';
 import type { BuildingState, BuildingType } from '../types';
 import { HammerIcon } from './Icons';
+import { ScaledStage } from './ScaledStage';
 
-const MASK_SIZE = 160;
 const ALPHA_THRESHOLD = 40;
 
-/**
- * Máscaras de silueta: una cuadrícula de opacidad por sprite. El área clicable es la silueta
- * visible (no el rectángulo del PNG), así los márgenes transparentes no interceptan a los vecinos.
- */
-function useSilhouetteMasks(): Partial<Record<BuildingType, Uint8Array>> {
-  const [masks, setMasks] = useState<Partial<Record<BuildingType, Uint8Array>>>({});
+/** Máscaras de silueta a partir de la transparencia real de cada PNG (sin márgenes que intercepten). */
+function useSilhouetteMasks(): Masks {
+  const [masks, setMasks] = useState<Masks>({});
   useEffect(() => {
     let cancelled = false;
     (Object.keys(SPRITE_SRC) as BuildingType[]).forEach((type) => {
@@ -47,171 +45,108 @@ interface Props {
 export function CityScene({ buildings, selected, now, onSelect }: Props) {
   const masks = useSilhouetteMasks();
   const [hover, setHover] = useState<BuildingType | null>(null);
-  const sceneRef = useRef<HTMLDivElement>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [focus, setFocus] = useState<BuildingType | null>(null);
+  const frameRef = useRef<HTMLDivElement>(null);
 
-  const byType = useMemo(() => Object.fromEntries(buildings.map((b) => [b.type, b])) as Record<BuildingType, BuildingState>, [buildings]);
-  // De delante hacia atrás (mayor y primero) para resolver solapamientos al hacer clic.
-  const frontToBack = useMemo(
-    () => (Object.keys(SLOTS) as BuildingType[]).sort((a, b) => SLOTS[b].y - SLOTS[a].y),
-    [],
-  );
+  const levels = useMemo(() => Object.fromEntries(buildings.map((b) => [b.type, b.level])) as Record<BuildingType, number>, [buildings]);
 
-  // En pantallas estrechas la escena es más ancha que la vista: se centra al cargar.
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (el) el.scrollLeft = (el.scrollWidth - el.clientWidth) / 2;
-  }, []);
-
-  function hitTest(clientX: number, clientY: number): BuildingType | null {
-    const rect = sceneRef.current?.getBoundingClientRect();
+  const hitAt = (clientX: number, clientY: number) => {
+    const rect = frameRef.current?.getBoundingClientRect();
     if (!rect) return null;
-    const px = ((clientX - rect.left) / rect.width) * SCENE_W;
-    const py = ((clientY - rect.top) / rect.height) * SCENE_H;
-    for (const type of frontToBack) {
-      const slot = SLOTS[type];
-      if (byType[type].level > 0) {
-        const box = spriteBox(type);
-        const u = (px - box.left) / box.size;
-        const v = (py - box.top) / box.size;
-        if (u < 0 || u >= 1 || v < 0 || v >= 1) continue;
-        const mask = masks[type];
-        if (mask && mask[Math.floor(v * MASK_SIZE) * MASK_SIZE + Math.floor(u * MASK_SIZE)]) return type;
-      } else {
-        const dx = (px - slot.x) / slot.plot.rx;
-        const dy = (py - slot.y) / slot.plot.ry;
-        if (dx * dx + dy * dy <= 1) return type;
-      }
-    }
-    return null;
-  }
+    const { x, y } = clientToStage(rect, clientX, clientY);
+    return hitTestBuildings(x, y, levels, masks);
+  };
 
-  const pct = (v: number, total: number) => `${(v / total) * 100}%`;
   const built = buildings.filter((b) => b.level > 0).sort((a, b) => SLOTS[a.type].y - SLOTS[b.type].y);
 
   return (
-    <div className="scene-scroll" ref={scrollRef}>
-      <div
-        className="scene"
-        ref={sceneRef}
-        style={{ aspectRatio: `${SCENE_W} / ${SCENE_H}`, cursor: hover ? 'pointer' : 'default' }}
-        onPointerMove={(e) => setHover(hitTest(e.clientX, e.clientY))}
-        onPointerLeave={() => setHover(null)}
-        onClick={(e) => {
-          const hit = hitTest(e.clientX, e.clientY);
-          if (hit) onSelect(hit);
-        }}
-        data-testid="city-scene"
-      >
-        <img className="scene-ground" src={GROUND_SRC} alt="Mapa de la villa y sus murallas" draggable={false} />
+    <ScaledStage
+      width={SCENE_W}
+      height={SCENE_H}
+      backdropSrc={GROUND_SRC}
+      frameRef={frameRef}
+      cursor={hover ? 'pointer' : 'default'}
+      label="Ciudad: terreno y edificios"
+      onPointerMove={(e) => setHover(hitAt(e.clientX, e.clientY))}
+      onPointerLeave={() => setHover(null)}
+      onClick={(e) => {
+        const hit = hitAt(e.clientX, e.clientY);
+        if (hit) onSelect(hit);
+      }}
+    >
+      <img className="stage-ground" src={GROUND_SRC} width={SCENE_W} height={SCENE_H} alt="" draggable={false} />
 
-        {/* Parcelas vacías o en construcción inicial */}
-        <svg className="plots" viewBox={`0 0 ${SCENE_W} ${SCENE_H}`} aria-hidden>
-          {buildings
-            .filter((b) => b.level === 0)
-            .map((b) => {
-              const s = SLOTS[b.type];
-              const active = hover === b.type || selected === b.type;
-              const progress = b.construction
-                ? Math.min(1, Math.max(0, (now - b.construction.startedAt) / (b.construction.finishesAt - b.construction.startedAt)))
-                : 0;
-              return (
-                <g key={b.type} className={`plot ${active ? 'is-active' : ''} ${b.construction ? 'is-building' : ''}`}>
-                  <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-ground" />
-                  <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-edge" />
-                  {[
-                    [-0.78, 0],
-                    [0.78, 0],
-                    [0, -0.78],
-                    [0, 0.78],
-                  ].map(([ox, oy], i) => (
-                    <g key={i} transform={`translate(${s.x + ox * s.plot.rx} ${s.y + oy * s.plot.ry})`}>
-                      <rect x="-3" y="-16" width="6" height="18" className="stake" />
-                      <path d="M-3-16h6l-3-7z" className="stake-tip" />
-                    </g>
-                  ))}
-                  {b.construction ? (
-                    <g transform={`translate(${s.x} ${s.y})`}>
-                      <circle r="24" className="ring-bg" />
-                      <circle r="24" className="ring" strokeDasharray={`${progress * 150.8} 150.8`} transform="rotate(-90)" />
-                      <g transform="translate(-14 -14) scale(1.17)">
-                        <HammerIcon size={24} />
-                      </g>
-                    </g>
-                  ) : (
-                    <g transform={`translate(${s.x} ${s.y})`} className="plot-plus">
-                      <circle r="22" />
-                      <path d="M-10 0h20M0-10v20" />
-                    </g>
-                  )}
-                </g>
-              );
-            })}
-        </svg>
-
-        {/* Edificios ordenados por profundidad: base más baja = más cerca de la cámara */}
-        {built.map((b) => {
-          const box = spriteBox(b.type);
-          const cls = ['sprite', hover === b.type ? 'is-hover' : '', selected === b.type ? 'is-selected' : '', b.construction ? 'is-upgrading' : '']
-            .filter(Boolean)
-            .join(' ');
-          return (
-            <img
-              key={b.type}
-              className={cls}
-              src={SPRITE_SRC[b.type]}
-              alt=""
-              draggable={false}
-              style={{
-                left: pct(box.left, SCENE_W),
-                top: pct(box.top, SCENE_H),
-                width: pct(box.size, SCENE_W),
-                zIndex: Math.round(SLOTS[b.type].y),
-              }}
-            />
-          );
-        })}
-
-        {/* Etiquetas: nombre, nivel y construcción. Son botones reales (accesibles con teclado). */}
+      {/* Parcelas y anillos de selección (SVG en el mismo sistema de coordenadas) */}
+      <svg className="stage-plots" viewBox={`0 0 ${SCENE_W} ${SCENE_H}`} width={SCENE_W} height={SCENE_H} aria-hidden>
         {buildings.map((b) => {
           const s = SLOTS[b.type];
-          const remaining = b.construction ? (b.construction.finishesAt - now) / 1000 : 0;
-          const progress = b.construction
-            ? Math.min(1, Math.max(0, (now - b.construction.startedAt) / (b.construction.finishesAt - b.construction.startedAt)))
-            : 0;
-          const active = hover === b.type || selected === b.type;
-          return (
+          const active = hover === b.type || selected === b.type || focus === b.type;
+          if (b.level === 0) {
+            const progress = b.construction ? Math.min(1, Math.max(0, (now - b.construction.startedAt) / (b.construction.finishesAt - b.construction.startedAt))) : 0;
+            return (
+              <g key={b.type} className={`plot ${active ? 'is-active' : ''} ${b.construction ? 'is-building' : ''}`}>
+                <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-fill" />
+                <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-edge" />
+                {b.construction ? (
+                  <g transform={`translate(${s.x} ${s.y})`}>
+                    <circle r="26" className="ring-bg" />
+                    <circle r="26" className="ring" strokeDasharray={`${progress * 163.4} 163.4`} transform="rotate(-90)" />
+                  </g>
+                ) : (
+                  <g transform={`translate(${s.x} ${s.y})`} className="plot-plus">
+                    <circle r="20" />
+                    <path d="M-8 0h16M0-8v16" />
+                  </g>
+                )}
+              </g>
+            );
+          }
+          return selected === b.type ? <ellipse key={b.type} cx={s.x} cy={s.y} rx={s.plot.rx * 0.95} ry={s.plot.ry * 0.95} className="select-ring" /> : null;
+        })}
+      </svg>
+
+      {built.map((b) => {
+        const box = spriteBox(b.type);
+        const cls = ['sprite', hover === b.type ? 'is-hover' : '', selected === b.type ? 'is-selected' : '', b.construction ? 'is-upgrading' : ''].filter(Boolean).join(' ');
+        return <img key={b.type} className={cls} src={SPRITE_SRC[b.type]} alt="" draggable={false} style={{ left: box.left, top: box.top, width: box.size, height: box.size, zIndex: Math.round(SLOTS[b.type].y) }} />;
+      })}
+
+      {/* Anclas: etiqueta compacta (selección/hover/foco) e indicador de obra siempre visible */}
+      {buildings.map((b) => {
+        const s = SLOTS[b.type];
+        const active = hover === b.type || selected === b.type || focus === b.type;
+        const remaining = b.construction ? (b.construction.finishesAt - now) / 1000 : 0;
+        return (
+          <div key={b.type} className="anchor" style={{ left: s.x, top: s.y + s.labelDy, zIndex: 1000 + Math.round(s.y) }}>
             <button
-              key={b.type}
               type="button"
-              className={`bld-label ${active ? 'is-active' : ''} ${b.level === 0 && !b.construction ? 'is-empty' : ''}`}
-              style={{ left: pct(s.x, SCENE_W), top: pct(s.y + s.labelDy, SCENE_H), zIndex: 1000 + Math.round(s.y) }}
+              className={`anchor-btn ${active ? 'is-active' : ''}`}
               onClick={(e) => {
                 e.stopPropagation();
                 onSelect(b.type);
               }}
-              onPointerMove={(e) => e.stopPropagation()}
-              aria-label={`${b.name}, ${b.level > 0 ? `nivel ${b.level}` : 'parcela libre'}`}
+              onFocus={() => setFocus(b.type)}
+              onBlur={() => setFocus((f) => (f === b.type ? null : f))}
+              aria-label={`${b.name}, ${b.level > 0 ? `nivel ${b.level}` : 'parcela libre'}${b.construction ? `, en obra: nivel ${b.construction.targetLevel}` : ''}`}
             >
-              <span className="bld-title">
-                <span className="bld-name">{b.name}</span>
-                <span className="bld-level">{b.level > 0 ? `Nv ${b.level}` : b.construction ? '' : 'Libre'}</span>
-              </span>
-              {b.construction && (
-                <span className="bld-progress">
-                  <HammerIcon size={14} />
-                  <span>
-                    Nv {b.construction.targetLevel} · {fmtDuration(remaining)}
+              {(active || b.construction) && (
+                <span className="chip-label">
+                  <span className="chip-name">
+                    {b.name}
+                    {active && <span className="chip-level"> · {b.level > 0 ? `Nivel ${b.level}` : 'Parcela libre'}</span>}
                   </span>
-                  <span className="bar">
-                    <i style={{ width: `${progress * 100}%` }} />
-                  </span>
+                  {b.construction && (
+                    <span className="chip-build">
+                      <HammerIcon size={14} /> Nv {b.construction.targetLevel} · {fmtDuration(remaining)}
+                    </span>
+                  )}
                 </span>
               )}
             </button>
-          );
-        })}
-      </div>
-    </div>
+          </div>
+        );
+      })}
+    </ScaledStage>
   );
 }
+

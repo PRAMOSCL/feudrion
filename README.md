@@ -33,7 +33,7 @@ El servidor escucha por defecto solo en `127.0.0.1`. Variables opcionales: `HOST
 | --- | --- |
 | `npm run build` | Compila backend (`server/dist`) y frontend (`client/dist`) |
 | `npm start` | Arranca el backend compilado; si existe `client/dist`, también lo sirve en `http://127.0.0.1:3001` |
-| `npm test` | Ejecuta las pruebas del backend (Vitest) |
+| `npm test` | Pruebas del backend (Vitest) y de la geometría de la escena del cliente |
 | `npm run typecheck` | Comprueba tipos de backend y frontend |
 | `npm run db:migrate` | Aplica migraciones pendientes |
 | `npm run db:reset` | **Acción explícita de desarrollo:** borra todo el progreso y recrea el perfil de demostración |
@@ -45,8 +45,11 @@ img/                      Recursos gráficos originales entregados (sin tocar)
 client/public/assets/     Copia de los recursos con los nombres que usa el juego
 client/src/
   App.tsx, useGame.ts     Estado de la interfaz y estimaciones/cuentas regresivas
-  sceneConfig.ts          Posiciones, tamaños y anclajes de edificios en la ciudad
-  components/             CityScene (silueta clicable), BuildingPanel, WorldView, ArmyView, ReportsView…
+  sceneConfig.ts          Posiciones, tamaños y anclajes de edificios en la ciudad (coordenadas del terreno 1536×1024)
+  sceneGeometry.ts        Escala uniforme, conversión pantalla→lienzo y hit-test por silueta (con pruebas)
+  artManifest.ts          Arte opcional pendiente (null = marcador explícito)
+  components/             Shell, ScaledStage, ui (sistema compartido), CityScene, BuildingInspector, WorldView, ArmyView, ReportsView…
+  styles/                 Tokens y capas CSS (tokens, base, shell, ui, city, views)
 server/
   migrations/             Esquema SQL versionado (001_init.sql)
   src/config/balance.ts   TODO el balance: costos, tiempos, producción, capacidades, unidades, campamentos
@@ -113,6 +116,11 @@ Los errores devuelven `{ "error": { "code", "message" } }` con el mensaje en esp
 Se usan exclusivamente los siete recursos de `img/`. Los archivos originales `citiy_ground.png` y `swamill.png` tienen erratas en el
 nombre; se copian a `client/public/assets/` como `city_ground.png` y `sawmill.png`. Cada edificio usa una única imagen para todos
 sus niveles (el nivel se muestra con la interfaz). Las unidades usan símbolos SVG provisionales hasta que existan sus ilustraciones.
+
+## Rediseño visual
+
+Ver [`docs/REDISENO.md`](docs/REDISENO.md) (arquitectura de interfaz, verificación y diferencias pendientes) y
+[`docs/ASSETS_PENDIENTES.md`](docs/ASSETS_PENDIENTES.md) (arte que falta). Capturas en `docs/capturas/`.
 
 ## Composición de la ciudad
 

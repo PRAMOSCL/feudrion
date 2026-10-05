@@ -1,16 +1,14 @@
 import type { GameState } from '../types';
-import { CrossIcon } from './Icons';
+import { CloseButton } from './ui';
 
 export function RulesModal({ state, onClose }: { state: GameState; onClose: () => void }) {
   const r = state.rules;
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal" role="dialog" aria-label="Reglas del juego" onClick={(e) => e.stopPropagation()}>
-        <header className="panel-head">
+        <header className="insp-head">
           <h2>Reglas del señorío</h2>
-          <button className="icon-btn" onClick={onClose} aria-label="Cerrar">
-            <CrossIcon />
-          </button>
+          <CloseButton onClick={onClose} />
         </header>
         <div className="rules">
           <h3>Población y trabajo</h3>

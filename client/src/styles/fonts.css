@@ -1,0 +1,10 @@
+/* Marcellus local (paquete npm @fontsource, sin CDN). Se excluyen los dígitos U+0030–0039: Marcellus los dibuja
+   como numerales romanos (1 → I, 0 → O) y estorban en cifras; esos glifos caen a la fuente de interfaz. */
+@font-face {
+  font-family: 'MarcellusText';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('../../../node_modules/@fontsource/marcellus/files/marcellus-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0020-002F, U+003A-007E, U+00A0-00FF, U+0131, U+0152-0153, U+2013-2014, U+2018-201E, U+2022, U+2026, U+20AC;
+}

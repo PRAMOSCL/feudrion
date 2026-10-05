@@ -1,0 +1,39 @@
+/* Capas en orden de precedencia: tokens → base → shell → ui → views. Sin cascadas de overrides. */
+@layer tokens, base, shell, ui, city, views;
+
+@layer tokens {
+  :root {
+    /* Paleta de la referencia */
+    --bg: #191711;
+    --panel: #211e17;
+    --surface: #2b261b;
+    --border: #8d7038;
+    --brass: #c6a45d;
+    --ivory: #eee3c6;
+    --muted: #b7aa8d;
+    --green: #8ea957;
+    --red: #a75f4e;
+
+    /* Derivados */
+    --bg-deep: #141209;
+    --surface-2: #332d20;
+    --border-soft: rgba(141, 112, 56, 0.45);
+    --brass-bright: #e5c77a;
+    --amber: #d9953a;
+    --focus: #f2d98e;
+
+    /* Medidas del shell (referencia Ciudad 1672×941) */
+    --header-h: 70px;
+    --nav-w: 158px;
+    --footer-h: 40px;
+    --inspector-w: 350px;
+
+    --radius: 6px;
+    --radius-sm: 4px;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+
+    --font-title: 'MarcellusText', 'Segoe UI', system-ui, serif;
+    --font-text: 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+    --font-ui: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+  }
+}
