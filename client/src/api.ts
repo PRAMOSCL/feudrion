@@ -33,6 +33,7 @@ export const api = {
   state: () => request<GameState>('GET', '/api/state'),
   upgrade: (building: string) => request('POST', `/api/buildings/${building}/upgrade`, {}),
   workers: (assignment: Record<string, number>) => request('POST', '/api/workers', assignment),
+  garrison: (archers: number) => request('POST', '/api/garrison', { archers }),
   recruit: (unit: UnitType, quantity: number) => request('POST', '/api/recruit', { unit, quantity }),
   expedition: (camp: string, units: Partial<Record<UnitType, number>>) => request('POST', '/api/expeditions', { camp, units }),
 };

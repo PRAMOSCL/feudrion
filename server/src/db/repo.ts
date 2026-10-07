@@ -1,6 +1,7 @@
 import { BUILDING_TYPES, UNIT_TYPES, type BuildingType, type UnitType } from '../config/balance.js';
 import type { CityState } from '../game/economy.js';
 import { emptyUnits, type Loot, type UnitCounts } from '../game/combat.js';
+import { plotOfBuilding } from '../config/districts.js';
 import type { DB } from './connection.js';
 
 /** Acceso a datos: único módulo que conoce el esquema SQL de las tablas de juego. */
@@ -15,6 +16,7 @@ export interface CityRow {
   food: number;
   gold: number;
   population: number;
+  garrison_archers: number;
 }
 
 export interface ConstructionRow {
@@ -111,7 +113,11 @@ export function saveCityState(db: DB, s: CityState): void {
 }
 
 export function setBuilding(db: DB, cityId: number, type: BuildingType, level: number, workers: number): void {
-  db.prepare('UPDATE buildings SET level = ?, workers = ? WHERE city_id = ? AND type = ?').run(level, workers, cityId, type);
+  // Upsert: una ciudad creada antes de añadirse un tipo de edificio no tiene su fila hasta la primera obra.
+  const { districtId, plotId } = plotOfBuilding(type);
+  db.prepare(
+    'INSERT INTO buildings (city_id, type, level, workers, district_id, plot_id) VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(city_id, type) DO UPDATE SET level = excluded.level, workers = excluded.workers',
+  ).run(cityId, type, level, workers, districtId, plotId);
 }
 
 export function setWorkers(db: DB, cityId: number, type: BuildingType, workers: number): void {
@@ -134,6 +140,20 @@ export function nextDueEvent(db: DB, cityId: number, now: number): DueEvent | un
     )
     .get({ c: cityId, now }) as DueEvent | undefined;
 }
+
+/** Colocación (distrito y parcela) de los edificios de la ciudad. */
+export const getPlacements = (db: DB, cityId: number) =>
+  db.prepare('SELECT type, district_id AS districtId, plot_id AS plotId FROM buildings WHERE city_id = ?').all(cityId) as {
+    type: BuildingType;
+    districtId: string;
+    plotId: string;
+  }[];
+
+/* Guarnición de la muralla */
+export const getGarrison = (db: DB, cityId: number): number =>
+  (db.prepare('SELECT garrison_archers AS n FROM cities WHERE id = ?').get(cityId) as { n: number }).n;
+export const setGarrison = (db: DB, cityId: number, n: number) =>
+  db.prepare('UPDATE cities SET garrison_archers = ? WHERE id = ?').run(n, cityId);
 
 /* Construcciones */
 export const activeConstruction = (db: DB, cityId: number) =>

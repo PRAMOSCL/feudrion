@@ -122,6 +122,11 @@ sus niveles (el nivel se muestra con la interfaz). Las unidades usan símbolos S
 Ver [`docs/REDISENO.md`](docs/REDISENO.md) (arquitectura de interfaz, verificación y diferencias pendientes) y
 [`docs/ASSETS_PENDIENTES.md`](docs/ASSETS_PENDIENTES.md) (arte que falta). Capturas en `docs/capturas/`.
 
+## Ciudad viva
+
+Muralla construible (niveles 1–9, sin parcela), guarnición de arqueros, trabajadores/habitantes animados y agua: ver [`docs/CIUDAD_VIVA.md`](docs/CIUDAD_VIVA.md).
+La migración `002_wall_garrison.sql` es aditiva y se aplica sola al arrancar el servidor (no reinicia el progreso).
+
 ## Composición de la ciudad
 
 `client/src/sceneConfig.ts` define, en píxeles del escenario (1536 × 1024), el punto de anclaje de la base de cada edificio, su ancho y la

@@ -522,3 +522,51 @@
     color: #d8ccaf;
   }
 }
+
+@layer ui {
+  .activity-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13.5px;
+    margin: 0;
+  }
+  .activity-line .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .activity-line.is-on {
+    color: var(--green);
+  }
+  .activity-line.is-on .dot {
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+  }
+  .activity-line.is-off {
+    color: #e0b07c;
+  }
+  .activity-line.is-off .dot {
+    background: #e0b07c;
+  }
+  .hint-assign {
+    color: var(--brass);
+  }
+  .garrison-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--brass);
+  }
+  .garrison-row .grow {
+    color: var(--ivory);
+    font-family: var(--font-text);
+  }
+  .garrison-row small {
+    color: var(--muted);
+  }
+  .hdr-btn:disabled {
+    opacity: 0.4;
+  }
+}

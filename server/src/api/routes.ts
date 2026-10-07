@@ -1,8 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import { z } from 'zod';
+import { PLANNED_BUILDINGS, isPlannedType } from '../config/districts.js';
 import { BUILDING_TYPES, PRODUCTION_BUILDINGS, UNIT_TYPES } from '../config/balance.js';
 import type { DB } from '../db/connection.js';
-import { assignWorkers, recruit, runCommand, sendExpedition, startUpgrade } from '../services/commands.js';
+import { assignGarrison, assignWorkers, recruit, runCommand, sendExpedition, startUpgrade } from '../services/commands.js';
 import { GameError } from '../services/errors.js';
 import { getSnapshot } from '../services/snapshot.js';
 
@@ -30,6 +31,15 @@ const workersBody = z
     ) as Record<(typeof PRODUCTION_BUILDINGS)[number], z.ZodOptional<z.ZodNumber>>,
   )
   .strict('Solo se pueden asignar trabajadores a aserradero, cantera y granja.');
+
+const garrisonBody = z
+  .object({
+    archers: z
+      .number({ invalid_type_error: 'La guarnición debe ser un número.', required_error: 'Falta el número de arqueros.' })
+      .int('La guarnición debe ser un número entero.')
+      .min(0, 'La guarnición no puede ser negativa.'),
+  })
+  .strict();
 
 const recruitBody = z.object({ unit: unitEnum, quantity: qty }).strict();
 
@@ -75,6 +85,10 @@ export function createApp({ db, cityId, clock }: AppDeps) {
   app.get('/api/state', handler((_req, res) => res.json(getSnapshot(db, cityId, clock()))));
 
   app.post('/api/buildings/:type/upgrade', handler((req, res) => {
+    if (isPlannedType(String(req.params.type))) {
+      const p = PLANNED_BUILDINGS.find((b) => b.type === req.params.type);
+      throw new GameError(409, 'PLANNED_ONLY', `«${p?.name ?? req.params.type}» está planificado: su mecánica todavía no existe y no se puede construir.`);
+    }
     const type = parse(z.enum(BUILDING_TYPES, { errorMap: () => ({ message: 'Edificio desconocido.' }) }), req.params.type);
     send(res, runCommand(db, cityId, clock(), idemKey(req), (ctx) => startUpgrade(ctx, type)));
   }));
@@ -82,6 +96,11 @@ export function createApp({ db, cityId, clock }: AppDeps) {
   app.post('/api/workers', handler((req, res) => {
     const body = parse(workersBody, req.body);
     send(res, runCommand(db, cityId, clock(), idemKey(req), (ctx) => assignWorkers(ctx, body)));
+  }));
+
+  app.post('/api/garrison', handler((req, res) => {
+    const body = parse(garrisonBody, req.body);
+    send(res, runCommand(db, cityId, clock(), idemKey(req), (ctx) => assignGarrison(ctx, body.archers)));
   }));
 
   app.post('/api/recruit', handler((req, res) => {

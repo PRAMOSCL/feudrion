@@ -1,17 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ArmyInspector, ArmyMain } from './components/ArmyView';
 import { BuildingInspector } from './components/BuildingInspector';
 import { CityScene } from './components/CityScene';
+import { DistrictSelector } from './components/DistrictSelector';
+import { PlannedInspector } from './components/PlannedInspector';
+import { VillagePlan } from './components/VillagePlan';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ReportsInspector, ReportsMain, useSelectedReport } from './components/ReportsView';
 import { RulesModal } from './components/RulesModal';
 import { Shell, type View } from './components/Shell';
 import { CampInspector, WorldStage } from './components/WorldView';
+import { useReducedMotion } from './live/LiveLayer';
+import { buildLiveModel } from './live/liveModel';
 import type { BuildingType } from './types';
 import { useGame } from './useGame';
 
 const SEEN_KEY = 'senorios.lastSeenReport';
 const NAV_KEY = 'senorios.navCollapsed';
+const ANIM_KEY = 'senorios.animations';
+const DISTRICT_KEY = 'senorios.district';
+type SceneDistrict = 'fortress' | 'village';
 
 const readNumber = (key: string) => {
   try {
@@ -37,6 +45,28 @@ export function App() {
   const [rules, setRules] = useState(false);
   const [seen, setSeen] = useState(() => readNumber(SEEN_KEY));
   const [navCollapsed, setNavCollapsed] = useState(() => readNumber(NAV_KEY) === 1);
+  // Animaciones de la ciudad: activadas por defecto; se pueden desactivar y se respetan prefers-reduced-motion y la pestaña oculta.
+  const [animationsOn, setAnimationsOn] = useState(() => {
+    try {
+      return localStorage.getItem(ANIM_KEY) !== '0';
+    } catch {
+      return true;
+    }
+  });
+  const reducedMotion = useReducedMotion();
+  // Distrito visible en Ciudad y selección propia de cada uno (se conservan al cambiar de escena). La ciudad y el estado son únicos.
+  const [district, setDistrict] = useState<SceneDistrict>(() => {
+    try {
+      return localStorage.getItem(DISTRICT_KEY) === 'village' ? 'village' : 'fortress';
+    } catch {
+      return 'fortress';
+    }
+  });
+  const [plotId, setPlotId] = useState<string | null>(null);
+  const changeDistrict = (id: SceneDistrict) => {
+    setDistrict(id);
+    write(DISTRICT_KEY, id);
+  };
 
   const latestReport = state?.reports[0]?.id ?? 0;
   useEffect(() => {
@@ -46,6 +76,7 @@ export function App() {
     }
   }, [view, latestReport, seen]);
 
+  const live = useMemo(() => (state ? buildLiveModel(state) : null), [state]);
   const report = useSelectedReport(state ?? { reports: [] } as never, reportId);
 
   if (!state) {
@@ -71,15 +102,32 @@ export function App() {
   const selectedCamp = campKey ? state.camps.find((c) => c.key === campKey) : undefined;
   const barracks = state.buildings.find((b) => b.type === 'barracks')!;
   const goBarracks = () => {
+    changeDistrict('fortress');
     setBuilding('barracks');
     setView('city');
   };
 
   let main: React.ReactNode = null;
   let inspector: React.ReactNode = null;
+  const villageState = state.districts.find((d) => d.id === 'village');
   if (view === 'city') {
-    main = <CityScene buildings={state.buildings} selected={building} now={now} onSelect={setBuilding} />;
-    inspector = selectedBuilding ? (
+    const scene =
+      district === 'village' && villageState ? (
+        <VillagePlan district={villageState} selectedPlotId={plotId} onSelect={setPlotId} />
+      ) : (
+        <CityScene buildings={state.buildings} selected={building} now={now} live={live!} animate={animationsOn && !reducedMotion} onSelect={setBuilding} />
+      );
+    main = (
+      <>
+        <DistrictSelector districts={state.districts} active={district} onChange={changeDistrict} />
+        <div className="district-scene" id="district-scene" role="tabpanel" aria-labelledby={`district-tab-${district}`}>
+          {scene}
+        </div>
+      </>
+    );
+    inspector = district === 'village' ? (
+      villageState && plotId ? <PlannedInspector key={plotId} district={villageState} plotId={plotId} onClose={() => setPlotId(null)} /> : null
+    ) : selectedBuilding ? (
       <BuildingInspector key={selectedBuilding.type} state={state} building={selectedBuilding} now={now} estimate={estimate} onClose={() => setBuilding(null)} onChanged={refresh} onGoArmy={() => setView('army')} />
     ) : null;
   } else if (view === 'world') {
@@ -114,6 +162,14 @@ export function App() {
           });
         }}
         onRules={() => setRules(true)}
+        animationsOn={animationsOn}
+        animationsForcedOff={reducedMotion}
+        onToggleAnimations={() =>
+          setAnimationsOn((on) => {
+            write(ANIM_KEY, on ? '0' : '1');
+            return !on;
+          })
+        }
       >
         <ErrorBoundary resetKey={view} onReset={() => setView('city')}>
           {main}

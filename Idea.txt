@@ -11,3 +11,15 @@ Que sea lo mismo de antes, pero en 2D para Steam, con sistema de gestion de fort
 - Empezar como esclavo? y trabajar para comprar tu tierra?
 - Conseguir título de señor?
 - Sistema de progresion?
+
+
+Edficios (cada uno con sus mecánicas propias que hacen mas inmersivo el juego).
+- Sistema de casas de ciudadanos, que ya no se maneje solo por numero general, sino por familias, por ejemplo asignar una familia a trabajar en el aserradero o varias si es necesario, dependiendo de el numero de integrantes.
+- Catedrales e Iglesias: Posibilidad de definir fé de la población, ¿podria tener un impacto?
+- Edificios utiles o zonas: 
+* Plaza del mercado(Debe mostrarse gente comerciando, con tiendas de comercio medievales segun el porcentaje de felicidad de la gente y el nivel del castillo.
+* La Forja(producción de armas y armaduras, de diferentes tipos segun el nivel, para cada tipo de unidad).
+* La Lonja (Para definir el % de impuestos a la población)
+* Taberna(Aumenta la felicidad de la población)
+* Embajada(Alianza con otros jugadores), etc.
+         

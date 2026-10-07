@@ -7,3 +7,7 @@ server/data/
 .env
 .vite/
 *.log
+img/*.zip
+
+docs/fortaleza-v3-export/
+docs/fortaleza-v3-export.zip

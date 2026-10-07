@@ -1,4 +1,5 @@
 import { BUILDING_TYPES, START, UNIT_TYPES } from '../config/balance.js';
+import { plotOfBuilding } from '../config/districts.js';
 import type { DB } from './connection.js';
 
 /**
@@ -23,8 +24,11 @@ export function ensureDemoProfile(db: DB, now: number): number {
       )
       .run(player.lastInsertRowid, START.cityName, now, r.wood, r.stone, r.food, r.gold, START.population, now);
     const cityId = Number(city.lastInsertRowid);
-    const insB = db.prepare('INSERT INTO buildings (city_id, type, level, workers) VALUES (?, ?, ?, ?)');
-    for (const type of BUILDING_TYPES) insB.run(cityId, type, START.buildings[type].level, START.buildings[type].workers);
+    const insB = db.prepare('INSERT INTO buildings (city_id, type, level, workers, district_id, plot_id) VALUES (?, ?, ?, ?, ?, ?)');
+    for (const type of BUILDING_TYPES) {
+      const { districtId, plotId } = plotOfBuilding(type);
+      insB.run(cityId, type, START.buildings[type].level, START.buildings[type].workers, districtId, plotId);
+    }
     const insT = db.prepare('INSERT INTO troops (city_id, unit_type, quantity) VALUES (?, ?, 0)');
     for (const u of UNIT_TYPES) insT.run(cityId, u);
     return cityId;

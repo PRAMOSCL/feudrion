@@ -1,5 +1,5 @@
 import { useId, type ButtonHTMLAttributes, type ReactNode } from 'react';
-import { EXPECTED_FILE } from '../artManifest';
+import { ART, EXPECTED_FILE } from '../artManifest';
 import { RESOURCE_LABEL, costEntries, fmt } from '../format';
 import { GROUND_SRC, SCENE_H, SCENE_W, SLOTS, SPRITE_SRC } from '../sceneConfig';
 import type { BuildingType, Cost, ResourceKey, UnitType } from '../types';
@@ -116,14 +116,16 @@ export function ArtPending({ file, children, compact }: { file: string; children
  * de su parcela y el sprite encima, a escala uniforme (sin estirar). Las parcelas libres muestran
  * solo el terreno (y, opcionalmente, el edificio "fantasma" que se construiría).
  */
-export function BuildingPortrait({ type, built, ghost, height = 180, width = 322, k = 0.5, className = '' }: { type: BuildingType; built: boolean; ghost?: boolean; height?: number; width?: number; k?: number; className?: string }) {
+export function BuildingPortrait({ type, built, ghost, wallStage = 0, height = 180, width = 322, k = 0.5, className = '' }: { type: BuildingType; built: boolean; ghost?: boolean; /** Aspecto de la muralla (solo type = 'wall'). */ wallStage?: number; height?: number; width?: number; k?: number; className?: string }) {
   const s = SLOTS[type];
-  const ax = 0.5; // el anclaje de la base cae al 50 % del ancho…
+  const ax = type === 'wall' ? 0.66 : 0.5; // el anclaje cae al 50 % del ancho (el portón está junto al borde derecho del terreno)…
   const ay = 0.66; // …y al 66 % del alto
   const boxW = width;
   const bgX = boxW * ax - s.x * k;
   const bgY = height * ay - s.y * k;
   const sprite = s.w * k;
+  // La muralla no tiene sprite propio: se muestra su overlay real sobre el recorte del terreno en el portón.
+  const wallSrc = type === 'wall' ? ART.walls[(wallStage || 1) as 1 | 2 | 3] : null;
   return (
     <div
       className={`portrait-building ${className}`}
@@ -135,7 +137,10 @@ export function BuildingPortrait({ type, built, ghost, height = 180, width = 322
         backgroundPosition: `${bgX}px ${bgY}px`,
       }}
     >
-      {(built || ghost) && (
+      {type === 'wall' && wallSrc && (built || ghost) && (
+        <img src={wallSrc} alt="" draggable={false} className={ghost && !built ? 'is-ghost' : ''} style={{ left: bgX, top: bgY, width: SCENE_W * k, height: SCENE_H * k }} />
+      )}
+      {type !== 'wall' && (built || ghost) && (
         <img
           src={SPRITE_SRC[type]}
           alt=""

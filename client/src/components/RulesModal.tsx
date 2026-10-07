@@ -29,6 +29,14 @@ export function RulesModal({ state, onClose }: { state: GameState; onClose: () =
             <li>Los niveles van del 1 al {r.maxLevel}. Mejorar exige un nivel mínimo de castillo (y, en obras grandes, de almacén para poder guardar su costo).</li>
             <li>El servidor lleva la cuenta del tiempo: la obra termina aunque cierres el navegador.</li>
           </ul>
+          <h3>Muralla y guarnición</h3>
+          <ul>
+            <li>La <b>Muralla</b> es infraestructura del perímetro: no ocupa parcela y se selecciona desde el portón junto al puente. Las partidas empiezan <b>sin muralla</b>.</li>
+            <li>Niveles 1–{r.wall.maxLevel}: cada uno admite {r.wall.garrisonPerLevel} arqueros de guarnición y suma un {r.wall.defenseBonusPerLevelPct} % a la defensa del defensor. Su aspecto pasa de empalizada (1–3) a piedra (4–6) y reforzada (7–9).</li>
+            <li>Mientras se construye o mejora, la defensa vigente no cambia hasta que la obra termina. Comparte el bloqueo de «una obra a la vez».</li>
+            <li>Los arqueros de la guarnición se restan de tus tropas libres: no pueden reclutarse de nuevo ni salir en expedición mientras estén asignados.</li>
+            <li><b>Todavía no se usa en combate:</b> la V1 no tiene ataques a la ciudad, así que la defensa no influye en ninguna batalla.</li>
+          </ul>
           <h3>Ejército y expediciones</h3>
           <ul>
             <li>El cuartel desbloquea unidades por nivel y las entrena por tiempo. Los pedidos se entrenan en cola (máx. {r.recruitMaxQueue}).</li>

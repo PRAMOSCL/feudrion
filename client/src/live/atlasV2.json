@@ -1,0 +1,409 @@
+{
+  "version": 2,
+  "animationMethod": "explicit frame rectangles; NOT old 3x2 grid",
+  "walkDirection": "right; horizontal mirror is approximation for return",
+  "sheets": {
+    "villager_walk_sheet_v2": {
+      "file": "assets/villager_walk_sheet_v2.png",
+      "imageSize": [
+        1536,
+        1024
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "rect": [
+            75,
+            14,
+            310,
+            460
+          ],
+          "pivot": [
+            174.19,
+            455
+          ]
+        },
+        {
+          "index": 1,
+          "rect": [
+            439,
+            14,
+            283,
+            465
+          ],
+          "pivot": [
+            166.29,
+            460
+          ]
+        },
+        {
+          "index": 2,
+          "rect": [
+            821,
+            13,
+            277,
+            463
+          ],
+          "pivot": [
+            163.16,
+            458
+          ]
+        },
+        {
+          "index": 3,
+          "rect": [
+            1201,
+            13,
+            305,
+            464
+          ],
+          "pivot": [
+            167.2,
+            459
+          ]
+        },
+        {
+          "index": 4,
+          "rect": [
+            20,
+            497,
+            385,
+            473
+          ],
+          "pivot": [
+            231.84,
+            468
+          ]
+        },
+        {
+          "index": 5,
+          "rect": [
+            454,
+            496,
+            285,
+            485
+          ],
+          "pivot": [
+            170.71,
+            480
+          ]
+        },
+        {
+          "index": 6,
+          "rect": [
+            817,
+            498,
+            315,
+            467
+          ],
+          "pivot": [
+            167.2,
+            462
+          ]
+        },
+        {
+          "index": 7,
+          "rect": [
+            1196,
+            498,
+            334,
+            474
+          ],
+          "pivot": [
+            181.05,
+            469
+          ]
+        }
+      ],
+      "referenceHeight": 485,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "fpsSuggested": 8,
+      "scaleRule": "one scale = requested height / referenceHeight, shared by every frame; never normalize each frame separately",
+      "pivotRule": "draw crop offset by per-frame pivot so feet stay on route"
+    },
+    "villager_woman_sheet_v2": {
+      "file": "assets/villager_woman_sheet_v2.png",
+      "imageSize": [
+        1536,
+        1024
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "rect": [
+            89,
+            21,
+            325,
+            484
+          ],
+          "pivot": [
+            174.42,
+            479
+          ]
+        },
+        {
+          "index": 1,
+          "rect": [
+            459,
+            21,
+            256,
+            487
+          ],
+          "pivot": [
+            141.12,
+            482
+          ]
+        },
+        {
+          "index": 2,
+          "rect": [
+            813,
+            22,
+            259,
+            483
+          ],
+          "pivot": [
+            140.66,
+            478
+          ]
+        },
+        {
+          "index": 3,
+          "rect": [
+            1178,
+            21,
+            309,
+            486
+          ],
+          "pivot": [
+            155.67,
+            481
+          ]
+        },
+        {
+          "index": 4,
+          "rect": [
+            71,
+            517,
+            346,
+            476
+          ],
+          "pivot": [
+            194.16,
+            471
+          ]
+        },
+        {
+          "index": 5,
+          "rect": [
+            457,
+            517,
+            263,
+            476
+          ],
+          "pivot": [
+            145.85,
+            471
+          ]
+        },
+        {
+          "index": 6,
+          "rect": [
+            821,
+            517,
+            263,
+            474
+          ],
+          "pivot": [
+            137.8,
+            469
+          ]
+        },
+        {
+          "index": 7,
+          "rect": [
+            1153,
+            517,
+            340,
+            477
+          ],
+          "pivot": [
+            175.95,
+            472
+          ]
+        }
+      ],
+      "referenceHeight": 487,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "fpsSuggested": 8,
+      "scaleRule": "one scale = requested height / referenceHeight, shared by every frame; never normalize each frame separately",
+      "pivotRule": "draw crop offset by per-frame pivot so feet stay on route"
+    },
+    "worker_carry_sheet_v2": {
+      "file": "assets/worker_carry_sheet_v2.png",
+      "imageSize": [
+        1536,
+        1024
+      ],
+      "frames": [
+        {
+          "index": 0,
+          "rect": [
+            108,
+            12,
+            328,
+            468
+          ],
+          "pivot": [
+            161.43,
+            463
+          ]
+        },
+        {
+          "index": 1,
+          "rect": [
+            496,
+            12,
+            291,
+            466
+          ],
+          "pivot": [
+            123.23,
+            461
+          ]
+        },
+        {
+          "index": 2,
+          "rect": [
+            827,
+            11,
+            313,
+            471
+          ],
+          "pivot": [
+            145.18,
+            466
+          ]
+        },
+        {
+          "index": 3,
+          "rect": [
+            1173,
+            11,
+            321,
+            470
+          ],
+          "pivot": [
+            151.48,
+            465
+          ]
+        },
+        {
+          "index": 4,
+          "rect": [
+            74,
+            491,
+            381,
+            481
+          ],
+          "pivot": [
+            181.71,
+            476
+          ]
+        },
+        {
+          "index": 5,
+          "rect": [
+            483,
+            491,
+            308,
+            480
+          ],
+          "pivot": [
+            135.57,
+            475
+          ]
+        },
+        {
+          "index": 6,
+          "rect": [
+            843,
+            491,
+            300,
+            473
+          ],
+          "pivot": [
+            124.9,
+            468
+          ]
+        },
+        {
+          "index": 7,
+          "rect": [
+            1160,
+            490,
+            355,
+            483
+          ],
+          "pivot": [
+            161.01,
+            478
+          ]
+        }
+      ],
+      "referenceHeight": 483,
+      "order": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "fpsSuggested": 8,
+      "scaleRule": "one scale = requested height / referenceHeight, shared by every frame; never normalize each frame separately",
+      "pivotRule": "draw crop offset by per-frame pivot so feet stay on route"
+    }
+  },
+  "terrain": {
+    "file": "assets/terrain_village.png",
+    "sceneSize": [
+      1536,
+      1024
+    ],
+    "calibratedAgainstRepo": false
+  },
+  "house": {
+    "file": "assets/house_stage_1.png",
+    "doorAnchorApprox": [
+      0.79,
+      0.81
+    ],
+    "groundPivotApprox": [
+      0.56,
+      0.91
+    ],
+    "renderHeightSuggested": 150,
+    "functional": false
+  }
+}

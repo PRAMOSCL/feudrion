@@ -1,7 +1,8 @@
 import {
   BUILDINGS,
   CAMPS,
-  MAX_LEVEL,
+  GARRISON_UNIT,
+  maxLevelOf,
   PRODUCTION_BUILDINGS,
   RECRUIT,
   RESOURCES,
@@ -22,6 +23,7 @@ import type { DB } from '../db/connection.js';
 import * as repo from '../db/repo.js';
 import { emptyUnits, travelSeconds, type UnitCounts } from '../game/combat.js';
 import { assignedWorkers, type CityState } from '../game/economy.js';
+import { garrisonCapacity } from '../game/defense.js';
 import { advanceCity } from '../game/simulation.js';
 import { GameError } from './errors.js';
 
@@ -65,7 +67,7 @@ function pay(ctx: CommandContext, cost: Cost): void {
 /** Primer motivo que impide mejorar el edificio (null = se puede). */
 export function upgradeBlock(state: CityState, type: BuildingType, busy: boolean): { code: string; message: string } | null {
   const level = state.levels[type];
-  if (level >= MAX_LEVEL) return { code: 'MAX_LEVEL', message: 'El edificio ya está al nivel máximo.' };
+  if (level >= maxLevelOf(type)) return { code: 'MAX_LEVEL', message: 'El edificio ya está al nivel máximo.' };
   const target = level + 1;
   if (busy) return { code: 'CONSTRUCTION_BUSY', message: 'Ya hay una construcción en curso en la ciudad.' };
   const req = requirements(type, target);
@@ -150,6 +152,35 @@ export function recruit(ctx: CommandContext, unit: UnitType, quantity: number) {
   const end = start + recruitSeconds(unit, quantity, barracks) * 1000;
   repo.insertRecruitment(ctx.db, ctx.cityId, unit, quantity, start, end);
   return { unit, quantity, startsAt: start, finishesAt: end };
+}
+
+/* ------------------------------------------------------------------ */
+
+/**
+ * Fija el número de arqueros de guarnición. Los asignados se restan de las tropas disponibles (no pueden reclutarse de nuevo
+ * ni salir en expedición mientras estén reservados) y vuelven a casa al liberarlos. Invariante:
+ * arqueros totales = disponibles + guarnición + en expedición.
+ */
+export function assignGarrison(ctx: CommandContext, archers: number) {
+  const wall = ctx.state.levels.wall;
+  if (wall <= 0) throw new GameError(409, 'NO_WALL', 'Necesitas construir la Muralla para tener guarnición.');
+  const capacity = garrisonCapacity(wall);
+  if (archers > capacity) {
+    throw new GameError(409, 'GARRISON_CAPACITY', `La Muralla nivel ${wall} solo admite ${capacity} arqueros en la guarnición.`);
+  }
+  const current = repo.getGarrison(ctx.db, ctx.cityId);
+  const delta = archers - current;
+  if (delta > 0) {
+    const home = repo.getTroops(ctx.db, ctx.cityId)[GARRISON_UNIT];
+    if (delta > home) {
+      throw new GameError(409, 'NOT_ENOUGH_TROOPS', `Solo tienes ${home} arqueros libres en casa; necesitas ${delta} más para esa guarnición.`);
+    }
+  }
+  if (delta !== 0) {
+    repo.addTroops(ctx.db, ctx.cityId, GARRISON_UNIT, -delta);
+    repo.setGarrison(ctx.db, ctx.cityId, archers);
+  }
+  return { garrison: archers, capacity };
 }
 
 /* ------------------------------------------------------------------ */

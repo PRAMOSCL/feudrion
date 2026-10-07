@@ -168,11 +168,31 @@ const line = {
   strokeLinejoin: 'round' as const,
 };
 
-export type NavIconName = 'city' | 'world' | 'army' | 'reports' | 'rules' | 'menu' | 'help' | 'lock' | 'flag' | 'skull' | 'pin' | 'people' | 'shield' | 'fleur';
+export type NavIconName = 'plus' | 'minus' | 'expand' | 'motion' | 'city' | 'world' | 'army' | 'reports' | 'rules' | 'menu' | 'help' | 'lock' | 'flag' | 'skull' | 'pin' | 'people' | 'shield' | 'fleur';
 
 export function LineIcon({ name, size = 22, className }: { name: NavIconName; size?: number; className?: string }) {
   return (
     <svg {...base(size)} className={className}>
+      {name === 'plus' && (
+        <g {...line} strokeWidth={2.2}>
+          <path d="M12 5v14M5 12h14" />
+        </g>
+      )}
+      {name === 'minus' && (
+        <g {...line} strokeWidth={2.2}>
+          <path d="M5 12h14" />
+        </g>
+      )}
+      {name === 'expand' && (
+        <g {...line}>
+          <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+        </g>
+      )}
+      {name === 'motion' && (
+        <g {...line}>
+          <path d="M3 9c2.200-2 3.800-2 6 0s3.800 2 6 0 3.800-2 6 0M3 14c2.200-2 3.800-2 6 0s3.800 2 6 0 3.800-2 6 0M3 19c2.200-2 3.800-2 6 0s3.800 2 6 0 3.800-2 6 0" />
+        </g>
+      )}
       {name === 'city' && (
         <g {...line}>
           <path d="M5 20V9h3V6h2v3h4V6h2v3h3v11z" />

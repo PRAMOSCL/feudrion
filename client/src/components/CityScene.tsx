@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { fmtDuration } from '../format';
+import { LiveLayer } from '../live/LiveLayer';
+import { wallVisual, type LiveModel } from '../live/liveModel';
+import { WallLayers, useWallMask } from '../live/WallLayers';
 import { MASK_SIZE, clientToStage, hitTestBuildings, type Masks } from '../sceneGeometry';
-import { GROUND_SRC, SCENE_H, SCENE_W, SLOTS, SPRITE_SRC, spriteBox } from '../sceneConfig';
-import type { BuildingState, BuildingType } from '../types';
+import { CAMERA_FOCUS, CAMERA_MAX_SCALE, GROUND_SRC, SCENE_H, SCENE_W, SLOTS, SPRITE_SRC, spriteBox } from '../sceneConfig';
+import type { BuildingState, BuildingType, PlotBuilding } from '../types';
 import { HammerIcon } from './Icons';
 import { ScaledStage } from './ScaledStage';
 
@@ -13,7 +16,7 @@ function useSilhouetteMasks(): Masks {
   const [masks, setMasks] = useState<Masks>({});
   useEffect(() => {
     let cancelled = false;
-    (Object.keys(SPRITE_SRC) as BuildingType[]).forEach((type) => {
+    (Object.keys(SPRITE_SRC) as PlotBuilding[]).forEach((type) => {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
@@ -39,25 +42,34 @@ interface Props {
   buildings: BuildingState[];
   selected: BuildingType | null;
   now: number;
+  /** Modelo visual derivado del estado real (trabajadores activos, guarnición, población, muralla). */
+  live: LiveModel;
+  /** Animaciones activadas por el usuario y sin prefers-reduced-motion. */
+  animate: boolean;
   onSelect: (type: BuildingType) => void;
 }
 
-export function CityScene({ buildings, selected, now, onSelect }: Props) {
+export function CityScene({ buildings, selected, now, live, animate, onSelect }: Props) {
   const masks = useSilhouetteMasks();
   const [hover, setHover] = useState<BuildingType | null>(null);
   const [focus, setFocus] = useState<BuildingType | null>(null);
   const frameRef = useRef<HTMLDivElement>(null);
 
   const levels = useMemo(() => Object.fromEntries(buildings.map((b) => [b.type, b.level])) as Record<BuildingType, number>, [buildings]);
+  const wall = buildings.find((b) => b.type === 'wall');
+  const visual = wallVisual(wall, now);
+  const wallMask = useWallMask(visual.stage);
 
   const hitAt = (clientX: number, clientY: number) => {
     const rect = frameRef.current?.getBoundingClientRect();
     if (!rect) return null;
     const { x, y } = clientToStage(rect, clientX, clientY);
-    return hitTestBuildings(x, y, levels, masks);
+    return hitTestBuildings(x, y, levels, masks, wallMask);
   };
 
-  const built = buildings.filter((b) => b.level > 0).sort((a, b) => SLOTS[a.type].y - SLOTS[b.type].y);
+  const plots = buildings.filter((b) => b.type !== 'wall') as (BuildingState & { type: PlotBuilding })[];
+  const built = plots.filter((b) => b.level > 0).sort((a, b) => SLOTS[a.type].y - SLOTS[b.type].y);
+  const wallActive = !!wall && (hover === 'wall' || selected === 'wall' || focus === 'wall');
 
   return (
     <ScaledStage
@@ -66,7 +78,8 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
       backdropSrc={GROUND_SRC}
       frameRef={frameRef}
       cursor={hover ? 'pointer' : 'default'}
-      label="Ciudad: terreno y edificios"
+      label="Ciudad: terreno, muralla y edificios"
+      camera={{ key: 'fortress', focus: CAMERA_FOCUS, maxScale: CAMERA_MAX_SCALE, fitLabel: 'Ver toda la fortaleza' }}
       onPointerMove={(e) => setHover(hitAt(e.clientX, e.clientY))}
       onPointerLeave={() => setHover(null)}
       onClick={(e) => {
@@ -76,7 +89,11 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
     >
       <img className="stage-ground" src={GROUND_SRC} width={SCENE_W} height={SCENE_H} alt="" draggable={false} />
 
-      {/* Parcelas y anillos de selección (SVG en el mismo sistema de coordenadas) */}
+      {/* Capas dinámicas: agua (sobre el terreno) y personajes (bajo el frente de la muralla). La muralla va en dos recortes. */}
+      <LiveLayer model={live} animate={animate} />
+      <WallLayers visual={visual} highlighted={wallActive} />
+
+      {/* Parcelas, portón de la muralla y anillos de selección (SVG en el mismo sistema de coordenadas) */}
       <svg className="stage-plots" viewBox={`0 0 ${SCENE_W} ${SCENE_H}`} width={SCENE_W} height={SCENE_H} aria-hidden>
         {buildings.map((b) => {
           const s = SLOTS[b.type];
@@ -84,7 +101,7 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
           if (b.level === 0) {
             const progress = b.construction ? Math.min(1, Math.max(0, (now - b.construction.startedAt) / (b.construction.finishesAt - b.construction.startedAt))) : 0;
             return (
-              <g key={b.type} className={`plot ${active ? 'is-active' : ''} ${b.construction ? 'is-building' : ''}`}>
+              <g key={b.type} className={`plot ${active ? 'is-active' : ''} ${b.construction ? 'is-building' : ''} ${b.type === 'wall' ? 'is-gate' : ''}`}>
                 <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-fill" />
                 <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="plot-edge" />
                 {b.construction ? (
@@ -96,6 +113,21 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
                   <g transform={`translate(${s.x} ${s.y})`} className="plot-plus">
                     <circle r="20" />
                     <path d="M-8 0h16M0-8v16" />
+                  </g>
+                )}
+              </g>
+            );
+          }
+          if (b.type === 'wall') {
+            // Muralla construida: aro del portón al seleccionar; si se está mejorando, anillo de progreso (la defensa vigente no cambia).
+            const up = b.construction ? Math.min(1, Math.max(0, (now - b.construction.startedAt) / (b.construction.finishesAt - b.construction.startedAt))) : null;
+            return (
+              <g key={b.type}>
+                {selected === 'wall' && <ellipse cx={s.x} cy={s.y} rx={s.plot.rx} ry={s.plot.ry} className="select-ring" />}
+                {up !== null && (
+                  <g transform={`translate(${s.x} ${s.y - 70})`}>
+                    <circle r="20" className="ring-bg" />
+                    <circle r="20" className="ring" strokeDasharray={`${up * 125.7} 125.7`} transform="rotate(-90)" />
                   </g>
                 )}
               </g>
@@ -116,6 +148,7 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
         const s = SLOTS[b.type];
         const active = hover === b.type || selected === b.type || focus === b.type;
         const remaining = b.construction ? (b.construction.finishesAt - now) / 1000 : 0;
+        const stateLabel = b.type === 'wall' ? (b.level > 0 ? `Nivel ${b.level}` : b.construction ? 'En obra' : 'Sin construir') : b.level > 0 ? `Nivel ${b.level}` : 'Parcela libre';
         return (
           <div key={b.type} className="anchor" style={{ left: s.x, top: s.y + s.labelDy, zIndex: 1000 + Math.round(s.y) }}>
             <button
@@ -127,17 +160,17 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
               }}
               onFocus={() => setFocus(b.type)}
               onBlur={() => setFocus((f) => (f === b.type ? null : f))}
-              aria-label={`${b.name}, ${b.level > 0 ? `nivel ${b.level}` : 'parcela libre'}${b.construction ? `, en obra: nivel ${b.construction.targetLevel}` : ''}`}
+              aria-label={`${b.name}, ${b.type === 'wall' ? (b.level > 0 ? `nivel ${b.level}` : 'sin construir') : b.level > 0 ? `nivel ${b.level}` : 'parcela libre'}${b.construction ? `, en obra: nivel ${b.construction.targetLevel}` : ''}`}
             >
               {(active || b.construction) && (
                 <span className="chip-label">
                   <span className="chip-name">
                     {b.name}
-                    {active && <span className="chip-level"> · {b.level > 0 ? `Nivel ${b.level}` : 'Parcela libre'}</span>}
+                    {active && <span className="chip-level"> · {stateLabel}</span>}
                   </span>
                   {b.construction && (
                     <span className="chip-build">
-                      <HammerIcon size={14} /> Nv {b.construction.targetLevel} · {fmtDuration(remaining)}
+                      <HammerIcon size={14} /> {b.type === 'wall' && b.level === 0 ? 'Construyendo' : 'Mejorando'} Nv {b.construction.targetLevel} · {fmtDuration(remaining)}
                     </span>
                   )}
                 </span>
@@ -149,4 +182,3 @@ export function CityScene({ buildings, selected, now, onSelect }: Props) {
     </ScaledStage>
   );
 }
-

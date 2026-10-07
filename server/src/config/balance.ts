@@ -13,12 +13,15 @@ export const RESOURCES = ['wood', 'stone', 'food', 'gold'] as const;
 export type ResourceKey = (typeof RESOURCES)[number];
 export type Cost = Partial<Record<ResourceKey, number>>;
 
-export const BUILDING_TYPES = ['castle', 'sawmill', 'quarry', 'farm', 'warehouse', 'barracks'] as const;
+export const BUILDING_TYPES = ['castle', 'sawmill', 'quarry', 'farm', 'warehouse', 'barracks', 'wall'] as const;
 export type BuildingType = (typeof BUILDING_TYPES)[number];
 export const PRODUCTION_BUILDINGS = ['sawmill', 'quarry', 'farm'] as const;
 export type ProductionBuilding = (typeof PRODUCTION_BUILDINGS)[number];
 
 export const MAX_LEVEL = 10;
+/** Nivel máximo por edificio cuando difiere del general (la muralla llega a 9). */
+const MAX_LEVEL_OVERRIDE: Partial<Record<BuildingType, number>> = { wall: 9 };
+export const maxLevelOf = (type: BuildingType): number => MAX_LEVEL_OVERRIDE[type] ?? MAX_LEVEL;
 
 export const UNIT_TYPES = ['lancero', 'arquero', 'espadachin', 'ballestero'] as const;
 export type UnitType = (typeof UNIT_TYPES)[number];
@@ -39,6 +42,8 @@ export const START = {
     farm: { level: 1, workers: 4 },
     warehouse: { level: 1, workers: 0 },
     barracks: { level: 0, workers: 0 },
+    // Las partidas nuevas empiezan SIN muralla: nada de defensa gratuita.
+    wall: { level: 0, workers: 0 },
   } as Record<BuildingType, { level: number; workers: number }>,
 };
 
@@ -84,6 +89,8 @@ export const BUILDINGS: Record<BuildingType, BuildingDef> = {
   farm: { name: 'Granja', baseCost: { wood: 60, stone: 40, gold: 15 }, costGrowth: 1.42, baseSeconds: 30, firstLevelCastle: 1 },
   warehouse: { name: 'Almacén', baseCost: { wood: 90, stone: 70, gold: 25 }, costGrowth: 1.4, baseSeconds: 30, firstLevelCastle: 1 },
   barracks: { name: 'Cuartel', baseCost: { wood: 140, stone: 110, gold: 60, food: 40 }, costGrowth: 1.45, baseSeconds: 50, firstLevelCastle: 2 },
+  // Muralla: infraestructura del perímetro (no ocupa parcela). Piedra como recurso dominante; costos y tiempos en la escala del resto.
+  wall: { name: 'Muralla', baseCost: { wood: 120, stone: 220, gold: 60 }, costGrowth: 1.4, baseSeconds: 60, firstLevelCastle: 2 },
 };
 
 const roundTo5 = (n: number) => Math.max(5, Math.round(n / 5) * 5);
@@ -126,6 +133,8 @@ export const recruitTimeFactor = (barracksLevel: number) => Math.max(0.5, 1 - 0.
 export function baseRequirements(type: BuildingType, targetLevel: number): { castle: number; warehouse: number } {
   if (type === 'castle') return { castle: 0, warehouse: targetLevel >= 2 ? Math.ceil((targetLevel - 1) / 2) : 0 };
   const def = BUILDINGS[type];
+  // La muralla crece más despacio que el castillo: nivel n exige castillo ⌈n/2⌉+1 (mínimo 2).
+  if (type === 'wall') return { castle: Math.max(def.firstLevelCastle, Math.ceil(targetLevel / 2) + 1), warehouse: 0 };
   return { castle: Math.max(def.firstLevelCastle, targetLevel - 1), warehouse: 0 };
 }
 
@@ -232,3 +241,19 @@ export const COMBAT = {
 };
 
 export const HISTORY = { reportsShown: 30 };
+
+/* ------------------------------------------------------------------ */
+/* Muralla y guarnición (propuesta CONFIGURABLE, no validada por juego) */
+/* ------------------------------------------------------------------ */
+
+export const WALL = {
+  /** Arqueros que caben en la guarnición por nivel de muralla (0 si no está construida). */
+  garrisonPerLevel: 4,
+  /** Bonificación de defensa por nivel, como multiplicador único sobre la defensa base del defensor. */
+  defenseBonusPerLevel: 0.05,
+  /** Aspecto visual por tramos de nivel: 1–3 empalizada, 4–6 piedra, 7–9 reforzada (comparten sprite; las estadísticas son por nivel). */
+  stageBreakpoints: [3, 6, 9] as const,
+};
+
+/** Única unidad que puede guarnecer la muralla. */
+export const GARRISON_UNIT: UnitType = 'arquero';

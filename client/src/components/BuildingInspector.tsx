@@ -3,6 +3,7 @@ import { ApiError, api } from '../api';
 import { RESOURCE_LABEL, RESOURCE_ORDER, fmt, fmt1, fmtDuration } from '../format';
 import type { BuildingEffect, BuildingState, BuildingType, GameState, ResourceKey } from '../types';
 import { CheckIcon, ClockIcon, CrossIcon, HammerIcon, LineIcon, ResourceIcon, UnitIcon } from './Icons';
+import { GarrisonCard } from './GarrisonCard';
 import { BuildingPortrait, Button, Card, CloseButton, CostChips, ProgressBar, Stepper } from './ui';
 
 const FUNCTION_TEXT: Record<BuildingType, string> = {
@@ -12,6 +13,15 @@ const FUNCTION_TEXT: Record<BuildingType, string> = {
   farm: 'Campos y huertos que alimentan a la villa. Produce alimentos según los trabajadores asignados y el nivel.',
   warehouse: 'Graneros y bodegas. Su nivel fija cuánta madera, piedra, alimentos y oro puedes guardar; lo que no cabe se pierde.',
   barracks: 'Aquí se entrena a la milicia. Sus niveles desbloquean nuevas unidades y acortan el tiempo de reclutamiento.',
+  wall: 'Perímetro defensivo de la villa. No ocupa parcela: se selecciona desde el portón. Cada nivel amplía la guarnición de arqueros y suma un 5 % a la defensa; su aspecto evoluciona de empalizada a piedra y a reforzada.',
+};
+
+const WALL_STAGE_NAME = ['sin construir', 'empalizada', 'piedra', 'reforzada'];
+const ACTIVITY_TEXT: Record<string, string> = {
+  ok: 'Trabajando',
+  no_workers: 'Sin trabajadores asignados: no produce',
+  storage_full: 'Almacén lleno: producción detenida',
+  not_built: 'Sin construir',
 };
 
 const REQ_NAME: Record<string, string> = { castle: 'Castillo', warehouse: 'Almacén' };
@@ -22,6 +32,12 @@ function effectLines(type: BuildingType, e: BuildingEffect, state: GameState): s
       return [`Límite de habitantes: ${e.maxPopulation}`, `Ingreso base de oro: +${e.goldPerMinute}/min`];
     case 'warehouse':
       return [`Capacidad por recurso: ${fmt(e.capacity ?? 0)}`];
+    case 'wall':
+      return [
+        `Aspecto: ${WALL_STAGE_NAME[e.wallStage ?? 0]}`,
+        `Guarnición: hasta ${e.garrisonCapacity} arqueros`,
+        `Defensa del defensor: +${e.defenseBonusPct} %`,
+      ];
     case 'barracks': {
       const names = (e.unlockedUnits ?? []).map((u) => state.units.find((x) => x.type === u)?.name).filter(Boolean);
       return [`Unidades: ${names.length ? names.join(', ') : 'ninguna'}`, `Tiempo de reclutamiento: ${Math.round((e.recruitTimeFactor ?? 1) * 100)} %`];
@@ -87,7 +103,7 @@ export function BuildingInspector({ state, building: b, now, estimate, onClose, 
         <CloseButton onClick={onClose} label="Cerrar inspector" />
       </header>
 
-      <BuildingPortrait type={b.type} built={b.level > 0} ghost />
+      <BuildingPortrait type={b.type} built={b.level > 0} ghost wallStage={b.type === 'wall' ? (b.effect.wallStage ?? 0) || up?.effect.wallStage || 1 : 0} />
       <p className="insp-text">{FUNCTION_TEXT[b.type]}</p>
 
       {up && !b.construction ? (
@@ -154,11 +170,23 @@ export function BuildingInspector({ state, building: b, now, estimate, onClose, 
 
       {producing && b.level > 0 && (
         <Card title="Trabajadores" icon={<LineIcon name="people" size={20} />} aside={`${b.workers} / ${slots}`}>
+          {b.activity && (
+            <p className={`activity-line ${b.activity.producing ? 'is-on' : 'is-off'}`} role="status">
+              <span className="dot" aria-hidden /> {ACTIVITY_TEXT[b.activity.reason]}
+            </p>
+          )}
+          {b.workers < slots && Math.floor(state.population.free) > 0 && (
+            <p className="insp-note hint-assign">Tienes {fmt(state.population.free)} habitantes libres: asígnalos para producir más.</p>
+          )}
           <Stepper label={`Trabajadores en ${b.name}`} value={b.workers} min={0} max={maxWorkers} disabled={busy} onChange={(n) => run(() => api.workers({ [b.type]: n }))} />
           <p className="insp-note">
             Producción actual: <b>+{fmt1(b.workers * (b.effect.perWorkerPerMinute ?? 0))}</b> {RESOURCE_LABEL[b.effect.resource as ResourceKey].toLowerCase()}/min · habitantes libres: {fmt(state.population.free)}
           </p>
         </Card>
+      )}
+
+      {b.type === 'wall' && (
+        <GarrisonCard state={state} wallLevel={b.level} busy={busy} onApply={(n) => run(() => api.garrison(n), 'Guarnición actualizada.')} />
       )}
 
       <Card title="Producción" icon={<LineIcon name="city" size={20} />}>

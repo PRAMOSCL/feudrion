@@ -7,6 +7,13 @@
     display: flex;
     overflow: auto;
   }
+  /* El recorte evita que el fondo ampliado (scale) cree barras de desplazamiento. */
+  .stage-backdrop-clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
   .stage-backdrop {
     position: absolute;
     inset: 0;
@@ -223,5 +230,286 @@
   }
   .marcher.returning {
     background: #55772a;
+  }
+}
+
+@layer city {
+  /* ---------- Ciudad viva: agua, muralla y personajes en el mismo sistema de coordenadas ---------- */
+  .live-water,
+  .live-actors {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1536px;
+    height: 1024px;
+    pointer-events: none;
+  }
+  /* Orden de capas: terreno → agua (1) → muralla trasera (2) → parcelas (3) → edificios (z = y) → personajes (900) → muralla delantera (950) → etiquetas (1000+) */
+  .live-water {
+    z-index: 1;
+  }
+  .live-actors {
+    z-index: 900;
+  }
+  .wall-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: none;
+    pointer-events: none;
+    transition: filter 0.15s;
+  }
+  .wall-back {
+    z-index: 2;
+  }
+  .wall-front {
+    z-index: 950;
+  }
+  .stage-plots {
+    z-index: 3;
+  }
+  .wall-layer.is-building {
+    filter: brightness(0.85) saturate(0.8);
+  }
+  .wall-layer.is-highlighted {
+    filter: drop-shadow(0 0 2px rgba(255, 238, 180, 1)) drop-shadow(0 0 12px rgba(255, 220, 130, 0.55));
+  }
+  .plot.is-gate .plot-fill {
+    fill: rgba(238, 227, 198, 0.1);
+  }
+}
+
+@layer city {
+  /* ---------- Selector de distritos ---------- */
+  .district-bar {
+    flex: none;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 6px 12px;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-soft);
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+  .district-tabs {
+    display: flex;
+    gap: 4px;
+  }
+  .district-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    font-family: var(--font-title);
+    font-size: 16px;
+    color: var(--muted);
+    background: #221e15;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .district-tab small {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: var(--amber);
+  }
+  .district-tab:hover {
+    color: var(--ivory);
+  }
+  .district-tab.is-active {
+    color: var(--ivory);
+    background: linear-gradient(180deg, rgba(198, 164, 93, 0.35), rgba(198, 164, 93, 0.1));
+    border-color: var(--brass);
+    box-shadow: inset 0 -2px 0 var(--brass-bright);
+  }
+  .district-future {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .district-future li {
+    padding: 4px 10px;
+    border: 1px dashed rgba(141, 112, 56, 0.45);
+    border-radius: 12px;
+    opacity: 0.7;
+    cursor: default;
+    user-select: none;
+  }
+  .district-future small {
+    color: var(--amber);
+  }
+  .district-scene {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---------- Plano de planificación de la Villa ---------- */
+  .plan-svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: none;
+  }
+  .plan-plot {
+    fill: rgba(198, 164, 93, 0.07);
+    stroke: rgba(238, 227, 198, 0.55);
+    stroke-width: 2.5;
+    stroke-dasharray: 10 8;
+    transition: fill 0.15s;
+  }
+  .plan-plot.is-active {
+    fill: rgba(198, 164, 93, 0.2);
+    stroke: var(--brass-bright);
+  }
+  .plan-plot.is-selected {
+    stroke-width: 4;
+    stroke-dasharray: none;
+  }
+  .plan-chip {
+    background: rgba(25, 23, 17, 0.88);
+  }
+  .plan-state {
+    font-family: var(--font-ui);
+    font-size: 11.5px;
+    color: var(--amber);
+  }
+  .plan-anchor .chip-label {
+    pointer-events: auto;
+  }
+  .plan-banner {
+    display: grid;
+    gap: 2px;
+    max-width: 440px;
+    padding: 8px 12px;
+    background: rgba(25, 23, 17, 0.92);
+    border: 1px solid var(--amber);
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .plan-banner b {
+    color: var(--amber);
+    font-family: var(--font-title);
+    font-weight: 400;
+    font-size: 15px;
+  }
+  .planned-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px dashed var(--amber);
+    border-radius: 12px;
+    color: var(--amber);
+    font-size: 13.5px;
+    width: fit-content;
+  }
+}
+
+@layer city {
+  .plan-chip {
+    max-width: 150px;
+    white-space: normal;
+    text-align: center;
+  }
+  .plan-chip .chip-name {
+    white-space: normal;
+  }
+  .plan-state {
+    white-space: normal;
+    line-height: 1.2;
+  }
+}
+
+@layer city {
+  .plan-corridor-wide {
+    stroke: rgba(142, 169, 87, 0.18);
+  }
+  .plan-corridor-line {
+    stroke: rgba(142, 169, 87, 0.75);
+  }
+  /* Sobre el terreno real (claro): trazos oscuros para que el plano se lea */
+  .on-terrain .plan-corridor-wide {
+    stroke: rgba(20, 40, 12, 0.22);
+  }
+  .on-terrain .plan-corridor-line {
+    stroke: rgba(20, 40, 12, 0.9);
+  }
+  .on-terrain .plan-plot {
+    fill: rgba(25, 23, 17, 0.12);
+    stroke: rgba(25, 23, 17, 0.9);
+  }
+  .on-terrain .plan-plot.is-active {
+    fill: rgba(229, 199, 122, 0.3);
+    stroke: #fff2b8;
+  }
+}
+
+@layer city {
+  /* ---------- Cámara (zoom y desplazamiento) ---------- */
+  .stage-viewport.has-camera {
+    overflow: hidden;
+    touch-action: none;
+    cursor: default;
+  }
+  .stage-viewport.has-camera:focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: -3px;
+  }
+  .cam-controls {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 5000;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .cam-btn {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: rgba(25, 23, 17, 0.9);
+    border: 1px solid var(--brass);
+    border-radius: var(--radius);
+    color: var(--ivory);
+    font-family: var(--font-title);
+    font-size: 14px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+  }
+  .cam-btn:hover:not(:disabled) {
+    background: rgba(60, 50, 28, 0.95);
+  }
+  .cam-btn:disabled {
+    opacity: 0.4;
+  }
+}
+
+@layer city {
+  /* Guardias del circuito completo: «back» tras edificios (sobre el cuerpo trasero de la muralla), «front» sobre el cuerpo delantero. */
+  .live-guards-back,
+  .live-guards-front {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1536px;
+    height: 1024px;
+    pointer-events: none;
+  }
+  .live-guards-back {
+    z-index: 3;
+  }
+  .live-guards-front {
+    z-index: 960;
   }
 }

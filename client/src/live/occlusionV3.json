@@ -1,0 +1,1148 @@
+{
+  "1": {
+    "north-a": {
+      "polygon": [
+        [
+          368,
+          103
+        ],
+        [
+          450,
+          103
+        ],
+        [
+          534,
+          103
+        ],
+        [
+          534,
+          199
+        ],
+        [
+          450,
+          199
+        ],
+        [
+          368,
+          199
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "north-b": {
+      "polygon": [
+        [
+          590,
+          111
+        ],
+        [
+          800,
+          169
+        ],
+        [
+          1050,
+          237
+        ],
+        [
+          1295,
+          305
+        ],
+        [
+          1295,
+          401
+        ],
+        [
+          1050,
+          333
+        ],
+        [
+          800,
+          265
+        ],
+        [
+          590,
+          207
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-a": {
+      "polygon": [
+        [
+          1360,
+          341
+        ],
+        [
+          1410,
+          367
+        ],
+        [
+          1455,
+          390
+        ],
+        [
+          1455,
+          486
+        ],
+        [
+          1410,
+          463
+        ],
+        [
+          1360,
+          437
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-b": {
+      "polygon": [
+        [
+          1508,
+          455
+        ],
+        [
+          1507,
+          513
+        ],
+        [
+          1485,
+          563
+        ],
+        [
+          1457,
+          592
+        ],
+        [
+          1410,
+          624
+        ],
+        [
+          1410,
+          720
+        ],
+        [
+          1457,
+          688
+        ],
+        [
+          1485,
+          659
+        ],
+        [
+          1507,
+          609
+        ],
+        [
+          1508,
+          551
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "gate-platform": {
+      "polygon": [
+        [
+          1325,
+          665
+        ],
+        [
+          1280,
+          683
+        ],
+        [
+          1231,
+          701
+        ],
+        [
+          1231,
+          797
+        ],
+        [
+          1280,
+          779
+        ],
+        [
+          1325,
+          761
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-a": {
+      "polygon": [
+        [
+          1158,
+          753
+        ],
+        [
+          1050,
+          786
+        ],
+        [
+          960,
+          804
+        ],
+        [
+          867,
+          813
+        ],
+        [
+          800,
+          811
+        ],
+        [
+          727,
+          797
+        ],
+        [
+          543,
+          748
+        ],
+        [
+          543,
+          844
+        ],
+        [
+          727,
+          893
+        ],
+        [
+          800,
+          907
+        ],
+        [
+          867,
+          909
+        ],
+        [
+          960,
+          900
+        ],
+        [
+          1050,
+          882
+        ],
+        [
+          1158,
+          849
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-b": {
+      "polygon": [
+        [
+          451,
+          708
+        ],
+        [
+          320,
+          666
+        ],
+        [
+          205,
+          615
+        ],
+        [
+          205,
+          711
+        ],
+        [
+          320,
+          762
+        ],
+        [
+          451,
+          804
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-a": {
+      "polygon": [
+        [
+          205,
+          615
+        ],
+        [
+          163,
+          586
+        ],
+        [
+          142,
+          552
+        ],
+        [
+          114,
+          485
+        ],
+        [
+          75,
+          394
+        ],
+        [
+          40,
+          328
+        ],
+        [
+          40,
+          424
+        ],
+        [
+          75,
+          490
+        ],
+        [
+          114,
+          581
+        ],
+        [
+          142,
+          648
+        ],
+        [
+          163,
+          682
+        ],
+        [
+          205,
+          711
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-b": {
+      "polygon": [
+        [
+          76,
+          259
+        ],
+        [
+          105,
+          238
+        ],
+        [
+          125,
+          225
+        ],
+        [
+          125,
+          321
+        ],
+        [
+          105,
+          334
+        ],
+        [
+          76,
+          355
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "northwest": {
+      "polygon": [
+        [
+          203,
+          177
+        ],
+        [
+          250,
+          153
+        ],
+        [
+          287,
+          131
+        ],
+        [
+          287,
+          227
+        ],
+        [
+          250,
+          249
+        ],
+        [
+          203,
+          273
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    }
+  },
+  "2": {
+    "north-a": {
+      "polygon": [
+        [
+          368,
+          107
+        ],
+        [
+          450,
+          107
+        ],
+        [
+          534,
+          107
+        ],
+        [
+          534,
+          199
+        ],
+        [
+          450,
+          199
+        ],
+        [
+          368,
+          199
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "north-b": {
+      "polygon": [
+        [
+          590,
+          119
+        ],
+        [
+          800,
+          177
+        ],
+        [
+          1050,
+          245
+        ],
+        [
+          1295,
+          313
+        ],
+        [
+          1295,
+          405
+        ],
+        [
+          1050,
+          337
+        ],
+        [
+          800,
+          269
+        ],
+        [
+          590,
+          211
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-a": {
+      "polygon": [
+        [
+          1360,
+          345
+        ],
+        [
+          1410,
+          371
+        ],
+        [
+          1455,
+          394
+        ],
+        [
+          1455,
+          486
+        ],
+        [
+          1410,
+          463
+        ],
+        [
+          1360,
+          437
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-b": {
+      "polygon": [
+        [
+          1508,
+          459
+        ],
+        [
+          1507,
+          517
+        ],
+        [
+          1485,
+          567
+        ],
+        [
+          1457,
+          596
+        ],
+        [
+          1410,
+          628
+        ],
+        [
+          1410,
+          720
+        ],
+        [
+          1457,
+          688
+        ],
+        [
+          1485,
+          659
+        ],
+        [
+          1507,
+          609
+        ],
+        [
+          1508,
+          551
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "gate-platform": {
+      "polygon": [
+        [
+          1325,
+          669
+        ],
+        [
+          1280,
+          687
+        ],
+        [
+          1231,
+          705
+        ],
+        [
+          1231,
+          797
+        ],
+        [
+          1280,
+          779
+        ],
+        [
+          1325,
+          761
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-a": {
+      "polygon": [
+        [
+          1158,
+          757
+        ],
+        [
+          1050,
+          790
+        ],
+        [
+          960,
+          808
+        ],
+        [
+          867,
+          815
+        ],
+        [
+          800,
+          813
+        ],
+        [
+          727,
+          799
+        ],
+        [
+          543,
+          748
+        ],
+        [
+          543,
+          840
+        ],
+        [
+          727,
+          891
+        ],
+        [
+          800,
+          905
+        ],
+        [
+          867,
+          907
+        ],
+        [
+          960,
+          900
+        ],
+        [
+          1050,
+          882
+        ],
+        [
+          1158,
+          849
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-b": {
+      "polygon": [
+        [
+          451,
+          712
+        ],
+        [
+          320,
+          670
+        ],
+        [
+          205,
+          619
+        ],
+        [
+          205,
+          711
+        ],
+        [
+          320,
+          762
+        ],
+        [
+          451,
+          804
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-a": {
+      "polygon": [
+        [
+          205,
+          619
+        ],
+        [
+          163,
+          590
+        ],
+        [
+          142,
+          556
+        ],
+        [
+          114,
+          489
+        ],
+        [
+          75,
+          398
+        ],
+        [
+          40,
+          332
+        ],
+        [
+          40,
+          424
+        ],
+        [
+          75,
+          490
+        ],
+        [
+          114,
+          581
+        ],
+        [
+          142,
+          648
+        ],
+        [
+          163,
+          682
+        ],
+        [
+          205,
+          711
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-b": {
+      "polygon": [
+        [
+          76,
+          263
+        ],
+        [
+          105,
+          242
+        ],
+        [
+          125,
+          229
+        ],
+        [
+          125,
+          321
+        ],
+        [
+          105,
+          334
+        ],
+        [
+          76,
+          355
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "northwest": {
+      "polygon": [
+        [
+          203,
+          181
+        ],
+        [
+          250,
+          157
+        ],
+        [
+          287,
+          135
+        ],
+        [
+          287,
+          227
+        ],
+        [
+          250,
+          249
+        ],
+        [
+          203,
+          273
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    }
+  },
+  "3": {
+    "north-a": {
+      "polygon": [
+        [
+          368,
+          107
+        ],
+        [
+          450,
+          107
+        ],
+        [
+          534,
+          107
+        ],
+        [
+          534,
+          199
+        ],
+        [
+          450,
+          199
+        ],
+        [
+          368,
+          199
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "north-b": {
+      "polygon": [
+        [
+          590,
+          119
+        ],
+        [
+          800,
+          177
+        ],
+        [
+          1050,
+          245
+        ],
+        [
+          1295,
+          313
+        ],
+        [
+          1295,
+          405
+        ],
+        [
+          1050,
+          337
+        ],
+        [
+          800,
+          269
+        ],
+        [
+          590,
+          211
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-a": {
+      "polygon": [
+        [
+          1360,
+          345
+        ],
+        [
+          1410,
+          371
+        ],
+        [
+          1455,
+          394
+        ],
+        [
+          1455,
+          486
+        ],
+        [
+          1410,
+          463
+        ],
+        [
+          1360,
+          437
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "east-b": {
+      "polygon": [
+        [
+          1508,
+          459
+        ],
+        [
+          1507,
+          517
+        ],
+        [
+          1485,
+          567
+        ],
+        [
+          1457,
+          596
+        ],
+        [
+          1410,
+          628
+        ],
+        [
+          1410,
+          720
+        ],
+        [
+          1457,
+          688
+        ],
+        [
+          1485,
+          659
+        ],
+        [
+          1507,
+          609
+        ],
+        [
+          1508,
+          551
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "gate-platform": {
+      "polygon": [
+        [
+          1325,
+          669
+        ],
+        [
+          1280,
+          687
+        ],
+        [
+          1231,
+          705
+        ],
+        [
+          1231,
+          797
+        ],
+        [
+          1280,
+          779
+        ],
+        [
+          1325,
+          761
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-a": {
+      "polygon": [
+        [
+          1158,
+          757
+        ],
+        [
+          1050,
+          790
+        ],
+        [
+          960,
+          808
+        ],
+        [
+          867,
+          815
+        ],
+        [
+          800,
+          813
+        ],
+        [
+          727,
+          799
+        ],
+        [
+          543,
+          748
+        ],
+        [
+          543,
+          840
+        ],
+        [
+          727,
+          891
+        ],
+        [
+          800,
+          905
+        ],
+        [
+          867,
+          907
+        ],
+        [
+          960,
+          900
+        ],
+        [
+          1050,
+          882
+        ],
+        [
+          1158,
+          849
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "south-b": {
+      "polygon": [
+        [
+          451,
+          712
+        ],
+        [
+          320,
+          670
+        ],
+        [
+          205,
+          619
+        ],
+        [
+          205,
+          711
+        ],
+        [
+          320,
+          762
+        ],
+        [
+          451,
+          804
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-a": {
+      "polygon": [
+        [
+          205,
+          619
+        ],
+        [
+          163,
+          590
+        ],
+        [
+          142,
+          556
+        ],
+        [
+          114,
+          489
+        ],
+        [
+          75,
+          398
+        ],
+        [
+          40,
+          332
+        ],
+        [
+          40,
+          424
+        ],
+        [
+          75,
+          490
+        ],
+        [
+          114,
+          581
+        ],
+        [
+          142,
+          648
+        ],
+        [
+          163,
+          682
+        ],
+        [
+          205,
+          711
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "west-b": {
+      "polygon": [
+        [
+          76,
+          263
+        ],
+        [
+          105,
+          242
+        ],
+        [
+          125,
+          229
+        ],
+        [
+          125,
+          321
+        ],
+        [
+          105,
+          334
+        ],
+        [
+          76,
+          355
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    },
+    "northwest": {
+      "polygon": [
+        [
+          203,
+          181
+        ],
+        [
+          250,
+          157
+        ],
+        [
+          287,
+          135
+        ],
+        [
+          287,
+          227
+        ],
+        [
+          250,
+          249
+        ],
+        [
+          203,
+          273
+        ]
+      ],
+      "operation": "wall-alpha-intersection",
+      "note": "Borde delantero del camino de ronda; intersección con alfa nativo. No recortar los tobillos con una banda artificial por encima del punto de pies."
+    }
+  }
+}

@@ -26,10 +26,14 @@ interface Props {
   onView: (v: View) => void;
   onToggleNav: () => void;
   onRules: () => void;
+  /** Animaciones de la ciudad (agua, personajes): preferencia del usuario. */
+  animationsOn: boolean;
+  animationsForcedOff: boolean;
+  onToggleAnimations: () => void;
   children: ReactNode;
 }
 
-export function Shell({ state, view, now, error, estimate, unreadReports, navCollapsed, inspector, onView, onToggleNav, onRules, children }: Props) {
+export function Shell({ state, view, now, error, estimate, unreadReports, navCollapsed, inspector, onView, onToggleNav, onRules, animationsOn, animationsForcedOff, onToggleAnimations, children }: Props) {
   const active = state.expeditions.length;
   const next = state.expeditions.map((e) => (e.status === 'outbound' ? e.arriveAt : e.returnAt)).sort((a, b) => a - b)[0];
   const serverClock = new Date(now).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
@@ -76,6 +80,17 @@ export function Shell({ state, view, now, error, estimate, unreadReports, navCol
         </ul>
 
         <div className="header-actions">
+          <button
+            type="button"
+            className="hdr-btn"
+            aria-label={animationsOn ? 'Desactivar animaciones de la ciudad' : 'Activar animaciones de la ciudad'}
+            aria-pressed={animationsOn && !animationsForcedOff}
+            title={animationsForcedOff ? 'El sistema pide reducir el movimiento: animaciones desactivadas' : animationsOn ? 'Animaciones activadas' : 'Animaciones desactivadas'}
+            disabled={animationsForcedOff}
+            onClick={onToggleAnimations}
+          >
+            <LineIcon name="motion" size={24} />
+          </button>
           <button type="button" className="hdr-btn" aria-label="Reglas y ayuda" title="Reglas y ayuda" onClick={onRules}>
             <LineIcon name="help" size={24} />
           </button>

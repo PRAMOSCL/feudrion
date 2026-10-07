@@ -1,0 +1,327 @@
+{
+ "source": "senorios-fortaleza-v3-arte/geometry/scene-v3.json (extracto)",
+ "gate": {
+  "routeBridgeToInterior": [
+   [
+    1530,
+    865
+   ],
+   [
+    1480,
+    843
+   ],
+   [
+    1420,
+    813
+   ],
+   [
+    1370,
+    796
+   ],
+   [
+    1335,
+    790
+   ],
+   [
+    1305,
+    792
+   ],
+   [
+    1280,
+    780
+   ],
+   [
+    1280,
+    760
+   ],
+   [
+    1280,
+    740
+   ],
+   [
+    1258,
+    718
+   ],
+   [
+    1236,
+    705
+   ]
+  ],
+  "selectorEllipse": {
+   "center": [
+    1292,
+    800
+   ],
+   "rx": 78,
+   "ry": 38
+  }
+ },
+ "citizens": {
+  "feet": [
+   [
+    1530,
+    865
+   ],
+   [
+    1480,
+    843
+   ],
+   [
+    1420,
+    813
+   ],
+   [
+    1370,
+    796
+   ],
+   [
+    1335,
+    790
+   ],
+   [
+    1305,
+    792
+   ],
+   [
+    1280,
+    780
+   ],
+   [
+    1280,
+    760
+   ],
+   [
+    1280,
+    740
+   ],
+   [
+    1258,
+    718
+   ],
+   [
+    1236,
+    705
+   ],
+   [
+    1182,
+    662
+   ],
+   [
+    1212,
+    622
+   ],
+   [
+    1180,
+    590
+   ],
+   [
+    1140,
+    562
+   ],
+   [
+    1138,
+    530
+   ],
+   [
+    1100,
+    478
+   ],
+   [
+    1048,
+    452
+   ],
+   [
+    1000,
+    405
+   ],
+   [
+    965,
+    362
+   ],
+   [
+    915,
+    355
+   ],
+   [
+    790,
+    355
+   ],
+   [
+    700,
+    322
+   ],
+   [
+    610,
+    308
+   ],
+   [
+    540,
+    297
+   ],
+   [
+    510,
+    310
+   ],
+   [
+    465,
+    330
+   ],
+   [
+    402,
+    368
+   ],
+   [
+    405,
+    395
+   ],
+   [
+    450,
+    425
+   ],
+   [
+    520,
+    460
+   ],
+   [
+    545,
+    500
+   ],
+   [
+    540,
+    535
+   ],
+   [
+    510,
+    555
+   ],
+   [
+    465,
+    580
+   ],
+   [
+    500,
+    605
+   ],
+   [
+    560,
+    625
+   ],
+   [
+    595,
+    632
+   ]
+  ],
+  "direction": "ida y vuelta (ping-pong); espejo horizontal al volver",
+  "stopsIndexes": [
+   4,
+   22,
+   27
+  ],
+  "dwellSeconds": 2.4,
+  "limits": "entra por el puente y el portón; sin colisiones con edificios (no hay navegación): la ruta evita parcelas a ojo",
+  "visualHeightPx": 26,
+  "speedPxPerSecond": "22–28"
+ },
+ "guardSprite": {
+  "file": "/assets/viva/archer_patrol_sheet.png",
+  "sheet": [
+   3,
+   2
+  ],
+  "cell": [
+   512,
+   512
+  ],
+  "frames": [
+   {
+    "index": 0,
+    "cell": [
+     0,
+     0,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     343,
+     468
+    ],
+    "opaqueHeight": 445
+   },
+   {
+    "index": 1,
+    "cell": [
+     512,
+     0,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     300,
+     472
+    ],
+    "opaqueHeight": 449
+   },
+   {
+    "index": 2,
+    "cell": [
+     1024,
+     0,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     246.5,
+     472
+    ],
+    "opaqueHeight": 448
+   },
+   {
+    "index": 3,
+    "cell": [
+     0,
+     512,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     330.5,
+     447
+    ],
+    "opaqueHeight": 432
+   },
+   {
+    "index": 4,
+    "cell": [
+     512,
+     512,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     305,
+     441
+    ],
+    "opaqueHeight": 424
+   },
+   {
+    "index": 5,
+    "cell": [
+     1024,
+     512,
+     512,
+     512
+    ],
+    "pivotInCell": [
+     285.5,
+     450
+    ],
+    "opaqueHeight": 432
+   }
+  ],
+  "referenceHeight": 449,
+  "drawnHeightPx": 30,
+  "drawnScale": 0.066815144766147,
+  "pivotRule": "centro horizontal y pies (fila opaca más baja) de cada pose; escala común = altura / referenceHeight",
+  "actorCanvasResolution": 2
+ }
+}

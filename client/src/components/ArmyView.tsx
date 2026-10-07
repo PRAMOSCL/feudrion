@@ -136,6 +136,11 @@ export function ArmyInspector({ state, barracks, onViewBarracks }: { state: Game
             </li>
           ))}
         </ul>
+        {state.garrison.archers > 0 && (
+          <p className="insp-note">
+            <b>{state.garrison.archers}</b> arqueros más guarnecen la muralla (reservados; no están en la lista de libres).
+          </p>
+        )}
         {state.expeditions.length > 0 && <p className="insp-note">Hay {state.expeditions.length} expedición(es) en marcha; sus tropas no están disponibles hasta regresar.</p>}
       </Card>
 

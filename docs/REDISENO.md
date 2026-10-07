@@ -52,8 +52,8 @@ interacción: backend, SQLite, reglas, fórmulas, API y progreso no se tocaron.
 
 - **No es pixel-perfect.** Se compararon capturas lado a lado (`docs/capturas/comparacion/`). El shell, la composición de cada vista y
   el arte integrado son muy cercanos; no se midió diferencia píxel a píxel.
-- El arte del paquete está generado a partir de los mockups y **no es idéntico** a ellos (retratos y mapa distintos; el mapa no incluye
-  la «Vigía del norte» del mockup, por indicación del LEEME).
+- El arte del paquete está generado a partir de los mockups y **no es idéntico** a ellos (retratos y mapa distintos). La etiqueta «Vigía del norte» del mockup fue un
+  nombre introducido por el generador: el destino correcto es «Fortín de saqueadores», que es el que usa el juego.
 - La referencia recorta el terreno para llenar el área central; aquí la escena se escala completa (sin recortar edificios ni parcelas),
   así que quedan márgenes integrados con terreno difuminado en Ciudad y franjas oscuras en Mundo cuando el área no coincide con la proporción.
 - Iconos de navegación y acciones: SVG propios, no ilustrados como en la referencia. Los de recurso sí son los PNG del paquete.

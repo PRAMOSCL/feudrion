@@ -1,7 +1,9 @@
 // Forma del JSON que entrega GET /api/state (el servidor es la fuente de verdad).
 
 export type ResourceKey = 'wood' | 'stone' | 'food' | 'gold';
-export type BuildingType = 'castle' | 'sawmill' | 'quarry' | 'farm' | 'warehouse' | 'barracks';
+export type BuildingType = 'castle' | 'sawmill' | 'quarry' | 'farm' | 'warehouse' | 'barracks' | 'wall';
+/** Edificios que ocupan una parcela del terreno (la muralla es infraestructura del perímetro). */
+export type PlotBuilding = Exclude<BuildingType, 'wall'>;
 export type UnitType = 'lancero' | 'arquero' | 'espadachin' | 'ballestero';
 export type Cost = Partial<Record<ResourceKey, number>>;
 export type Loot = Record<ResourceKey, number>;
@@ -22,6 +24,17 @@ export interface BuildingEffect {
   resource?: ResourceKey;
   slots?: number;
   perWorkerPerMinute?: number;
+  /** Muralla */
+  garrisonCapacity?: number;
+  defenseBonusPct?: number;
+  wallStage?: 0 | 1 | 2 | 3;
+}
+
+/** Actividad productiva REAL (la misma condición que gobierna la economía): la animación solo trabaja si `producing`. */
+export interface BuildingActivity {
+  producing: boolean;
+  reason: 'ok' | 'no_workers' | 'storage_full' | 'not_built';
+  resource: ResourceKey;
 }
 
 export interface UpgradeInfo {
@@ -35,8 +48,28 @@ export interface UpgradeInfo {
   effect: BuildingEffect;
 }
 
+export interface PlannedBuildingState {
+  type: string;
+  name: string;
+  plotId: string;
+  phase: number;
+  status: 'planned';
+  pending: string[];
+}
+
+export interface DistrictState {
+  id: 'fortress' | 'village' | 'crafts' | 'countryside';
+  name: string;
+  status: 'active' | 'planning' | 'future';
+  description: string;
+  plots: { id: string; allowedTypes: string[]; building: BuildingType | null }[];
+  planned: PlannedBuildingState[];
+}
+
 export interface BuildingState {
   type: BuildingType;
+  districtId: string;
+  plotId: string;
   name: string;
   level: number;
   workers: number;
@@ -44,6 +77,7 @@ export interface BuildingState {
   effect: BuildingEffect;
   construction: { targetLevel: number; startedAt: number; finishesAt: number } | null;
   upgrade: UpgradeInfo | null;
+  activity: BuildingActivity | null;
 }
 
 export interface UnitState {
@@ -112,6 +146,9 @@ export interface GameState {
   resources: Record<ResourceKey, ResourceState>;
   population: { current: number; max: number; workers: number; free: number; growthPerMinute: number };
   buildings: BuildingState[];
+  /** Distritos y parcelas (fase 2). Solo ubicación y planificación; los planificados no son mecánicas. */
+  districts: DistrictState[];
+  garrison: { archers: number; capacity: number; availableArchers: number };
   units: UnitState[];
   recruitQueue: { id: number; unit: UnitType; quantity: number; startedAt: number; finishesAt: number }[];
   expeditions: ExpeditionState[];
@@ -123,5 +160,6 @@ export interface GameState {
     populationGrowthPerMinute: number;
     recruitMaxQuantity: number;
     recruitMaxQueue: number;
+    wall: { garrisonPerLevel: number; defenseBonusPerLevelPct: number; maxLevel: number };
   };
 }

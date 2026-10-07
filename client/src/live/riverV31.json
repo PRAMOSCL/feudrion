@@ -1,0 +1,337 @@
+{
+  "nativeSize": [
+    1536,
+    1024
+  ],
+  "maxFps": 24,
+  "mode": "advected-texture-and-falling-foam",
+  "patches": [
+    {
+      "id": "west",
+      "polygon": [
+        [
+          0,
+          652
+        ],
+        [
+          42,
+          675
+        ],
+        [
+          30,
+          708
+        ],
+        [
+          0,
+          694
+        ]
+      ],
+      "flow": [
+        0.72,
+        0.36
+      ],
+      "particleCount": 12,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "west-turn",
+      "polygon": [
+        [
+          55,
+          724
+        ],
+        [
+          100,
+          741
+        ],
+        [
+          165,
+          771
+        ],
+        [
+          156,
+          789
+        ],
+        [
+          99,
+          767
+        ],
+        [
+          50,
+          746
+        ]
+      ],
+      "flow": [
+        0.9,
+        0.43
+      ],
+      "particleCount": 22,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "southwest",
+      "polygon": [
+        [
+          160,
+          794
+        ],
+        [
+          224,
+          815
+        ],
+        [
+          310,
+          839
+        ],
+        [
+          291,
+          856
+        ],
+        [
+          205,
+          831
+        ],
+        [
+          159,
+          815
+        ]
+      ],
+      "flow": [
+        1,
+        0.28
+      ],
+      "particleCount": 18,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "southwest-2",
+      "polygon": [
+        [
+          322,
+          850
+        ],
+        [
+          399,
+          872
+        ],
+        [
+          473,
+          888
+        ],
+        [
+          454,
+          908
+        ],
+        [
+          398,
+          891
+        ],
+        [
+          316,
+          873
+        ]
+      ],
+      "flow": [
+        1,
+        0.27
+      ],
+      "particleCount": 16,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "south-center",
+      "polygon": [
+        [
+          521,
+          908
+        ],
+        [
+          584,
+          932
+        ],
+        [
+          622,
+          957
+        ],
+        [
+          596,
+          969
+        ],
+        [
+          552,
+          943
+        ],
+        [
+          505,
+          929
+        ]
+      ],
+      "flow": [
+        0.82,
+        0.36
+      ],
+      "particleCount": 18,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "south-low",
+      "polygon": [
+        [
+          642,
+          969
+        ],
+        [
+          703,
+          990
+        ],
+        [
+          771,
+          1004
+        ],
+        [
+          813,
+          1010
+        ],
+        [
+          808,
+          1023
+        ],
+        [
+          721,
+          1019
+        ],
+        [
+          654,
+          996
+        ]
+      ],
+      "flow": [
+        1,
+        0.25
+      ],
+      "particleCount": 18,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "south-east",
+      "polygon": [
+        [
+          910,
+          983
+        ],
+        [
+          969,
+          968
+        ],
+        [
+          1025,
+          947
+        ],
+        [
+          1048,
+          966
+        ],
+        [
+          1002,
+          987
+        ],
+        [
+          945,
+          1008
+        ]
+      ],
+      "flow": [
+        -0.95,
+        0.3
+      ],
+      "particleCount": 14,
+      "speed": 14,
+      "opacity": 0.2
+    },
+    {
+      "id": "east-flow",
+      "polygon": [
+        [
+          1024,
+          730
+        ],
+        [
+          1535,
+          730
+        ],
+        [
+          1535,
+          1023
+        ],
+        [
+          1024,
+          1023
+        ]
+      ],
+      "flow": [
+        -1,
+        0.55
+      ],
+      "particleCount": 80
+    }
+  ],
+  "falls": [
+    {
+      "polygon": [
+        [
+          1170,
+          899
+        ],
+        [
+          1211,
+          912
+        ],
+        [
+          1192,
+          946
+        ],
+        [
+          1158,
+          932
+        ]
+      ],
+      "flow": [
+        -0.3,
+        1
+      ]
+    },
+    {
+      "polygon": [
+        [
+          1270,
+          928
+        ],
+        [
+          1300,
+          937
+        ],
+        [
+          1280,
+          972
+        ],
+        [
+          1251,
+          960
+        ]
+      ],
+      "flow": [
+        -0.4,
+        1
+      ]
+    }
+  ],
+  "note": "Referencia de movimiento real de textura y espuma; integrar en bucle existente. Revisar visualmente en juego.",
+  "maskFile": "river_mask_v3_1.png",
+  "maskRule": "Agua azul dentro de regiones; espuma clara solo dentro de dos pol\u00edgonos de cascada."
+}

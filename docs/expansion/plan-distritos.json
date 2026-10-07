@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Planning reference only; not calibrated runtime configuration",
+  "coordinates": "normalized conceptual scene 0..1",
+  "sharedCityState": true,
+  "navigation": "district selector; no seamless tiling claim",
+  "districts": [
+    {
+      "id": "fortress",
+      "status": "existing",
+      "preserveBuildingIds": true
+    },
+    {
+      "id": "village",
+      "status": "planned",
+      "slots": [
+        {
+          "id": "entrada",
+          "anchor": [
+            0.12,
+            0.18
+          ],
+          "type": "route",
+          "status": "planned"
+        },
+        {
+          "id": "casas_oeste",
+          "anchor": [
+            0.23,
+            0.42
+          ],
+          "type": "housing_block",
+          "status": "planned"
+        },
+        {
+          "id": "casas_sur",
+          "anchor": [
+            0.39,
+            0.77
+          ],
+          "type": "housing_block",
+          "status": "planned"
+        },
+        {
+          "id": "mercado",
+          "anchor": [
+            0.5,
+            0.49
+          ],
+          "type": "market",
+          "status": "planned"
+        },
+        {
+          "id": "iglesia",
+          "anchor": [
+            0.65,
+            0.26
+          ],
+          "type": "church",
+          "status": "planned"
+        },
+        {
+          "id": "catedral_reserva",
+          "anchor": [
+            0.8,
+            0.23
+          ],
+          "type": "cathedral",
+          "status": "planned"
+        },
+        {
+          "id": "taberna",
+          "anchor": [
+            0.35,
+            0.57
+          ],
+          "type": "tavern",
+          "status": "planned"
+        },
+        {
+          "id": "concejo",
+          "anchor": [
+            0.68,
+            0.49
+          ],
+          "type": "town_hall",
+          "status": "planned"
+        },
+        {
+          "id": "embajada",
+          "anchor": [
+            0.79,
+            0.61
+          ],
+          "type": "embassy",
+          "status": "planned"
+        },
+        {
+          "id": "salida_oficios",
+          "anchor": [
+            0.94,
+            0.51
+          ],
+          "type": "route",
+          "status": "planned"
+        },
+        {
+          "id": "salida_campo",
+          "anchor": [
+            0.75,
+            0.92
+          ],
+          "type": "route",
+          "status": "planned"
+        }
+      ]
+    },
+    {
+      "id": "crafts",
+      "status": "future",
+      "buildings": [
+        "forge",
+        "workshops",
+        "depot",
+        "wholesale_hall"
+      ]
+    },
+    {
+      "id": "countryside",
+      "status": "future",
+      "buildings": [
+        "farm",
+        "sawmill",
+        "quarry"
+      ],
+      "relocation": "explicit future operation preserving IDs and progress"
+    }
+  ]
+}

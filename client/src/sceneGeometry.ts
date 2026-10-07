@@ -1,5 +1,5 @@
 import { SCENE_H, SCENE_W, SLOTS, spriteBox } from './sceneConfig';
-import type { BuildingType } from './types';
+import type { BuildingType, PlotBuilding } from './types';
 
 /**
  * Geometría de la escena de la ciudad. Todo se expresa en el sistema de coordenadas del lienzo
@@ -27,8 +27,15 @@ export function clientToStage(
 }
 
 /** Orden de hit-test: de delante hacia atrás (mayor y de anclaje primero). */
-export const frontToBackOrder = (): BuildingType[] =>
-  (Object.keys(SLOTS) as BuildingType[]).sort((a, b) => SLOTS[b].y - SLOTS[a].y);
+export const frontToBackOrder = (): PlotBuilding[] =>
+  (Object.keys(SLOTS) as BuildingType[]).filter((t): t is PlotBuilding => t !== 'wall').sort((a, b) => SLOTS[b].y - SLOTS[a].y);
+
+/** Máscara de opacidad de un overlay de muralla (resolución propia, no la de los edificios). */
+export interface WallMask {
+  data: Uint8Array;
+  w: number;
+  h: number;
+}
 
 export type Masks = Partial<Record<BuildingType, Uint8Array>>;
 
@@ -36,7 +43,7 @@ export type Masks = Partial<Record<BuildingType, Uint8Array>>;
  * Edificio bajo el punto (x, y) del lienzo. Los construidos responden por su silueta (máscara de
  * opacidad del PNG, sin márgenes transparentes); las parcelas libres por su elipse de huella.
  */
-export function hitTestBuildings(x: number, y: number, levels: Record<BuildingType, number>, masks: Masks): BuildingType | null {
+export function hitTestBuildings(x: number, y: number, levels: Record<BuildingType, number>, masks: Masks, wallMask?: WallMask | null): BuildingType | null {
   for (const type of frontToBackOrder()) {
     const slot = SLOTS[type];
     if (levels[type] > 0) {
@@ -51,6 +58,16 @@ export function hitTestBuildings(x: number, y: number, levels: Record<BuildingTy
       const dy = (y - slot.y) / slot.plot.ry;
       if (dx * dx + dy * dy <= 1) return type;
     }
+  }
+  // La muralla va después de los edificios: el portón (siempre) y, ya construida, la silueta de su overlay.
+  const gate = SLOTS.wall;
+  const gx = (x - gate.x) / gate.plot.rx;
+  const gy = (y - gate.y) / gate.plot.ry;
+  if (gx * gx + gy * gy <= 1) return 'wall';
+  if (levels.wall > 0 && wallMask) {
+    const mx = Math.floor((x / SCENE_W) * wallMask.w);
+    const my = Math.floor((y / SCENE_H) * wallMask.h);
+    if (mx >= 0 && mx < wallMask.w && my >= 0 && my < wallMask.h && wallMask.data[my * wallMask.w + mx]) return 'wall';
   }
   return null;
 }
